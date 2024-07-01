@@ -1,8 +1,11 @@
+import { AccountStatus, PrismaClient, Role } from "@prisma/client";
+import { Injectable } from "@nestjs/common";
+
 import { User, UserProp } from "src/shared/interface/user.interface";
 import { BaseRepository } from "./base.repository";
-import { AccountStatus, PrismaClient, Role } from "@prisma/client";
 import { ISingleFinder } from "../interface/single-finder.interface";
 
+@Injectable()
 export class UserRepository extends BaseRepository<User, UserProp> implements ISingleFinder<string, User> {
     selectProps(): UserProp {
         return {

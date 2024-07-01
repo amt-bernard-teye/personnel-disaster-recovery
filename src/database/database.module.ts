@@ -1,4 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
+import { UserRepository } from './repository/user.repository';
 
-@Module({})
+@Global()
+@Module({
+    imports: [
+        UserRepository
+    ]
+})
 export class DatabaseModule {}
