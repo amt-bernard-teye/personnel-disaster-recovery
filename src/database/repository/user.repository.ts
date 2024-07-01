@@ -26,7 +26,7 @@ export class UserRepository extends BaseRepository<User, UserProp> implements IS
         });
 
         const initial = preferredRole === Role.ADMIN ? "ADM" : "PSL";
-        return initial + (totalUserWithRole + 1);
+        return initial + (1000 + totalUserWithRole);
     }
 
     async add(entity: User): Promise<User> {
