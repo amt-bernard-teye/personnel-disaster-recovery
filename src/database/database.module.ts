@@ -3,7 +3,10 @@ import { UserRepository } from './repository/user.repository';
 
 @Global()
 @Module({
-    imports: [
+    providers: [
+        UserRepository
+    ],
+    exports: [
         UserRepository
     ]
 })
