@@ -1,19 +1,21 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AccountStatus } from '@prisma/client';
+import { AccountStatus, Role } from '@prisma/client';
 import { compare } from 'bcryptjs';
 
 import { UserRepository } from 'src/database/repository/user.repository';
+import { RegisterAccount } from './types/register-account.interface';
 import { User } from 'src/shared/interface/user.interface';
-
+import { RegisterAccountService } from 'src/mailer/service/register-account.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private userRepo: UserRepository,
         private configService: ConfigService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private accRegService: RegisterAccountService
     ) { }
 
     async login(email: string, pass: string) {
@@ -55,5 +57,40 @@ export class AuthService {
         }, {expiresIn: refreshTokenDuration, secret: secretKey});
 
         return {accessToken, refreshToken};
+    }
+
+    async register(body: RegisterAccount) {
+        try {
+            const existingUser = await this.userRepo.find(body.email);
+
+            if (existingUser) {
+                throw new BadRequestException("Email already exist");
+            }
+
+            const addedUser = await this.userRepo.add({
+                name: body.name,
+                email: body.email,
+                password: body.password,
+                accountStatus: AccountStatus.PENDING,
+                role: Role.PERSONNEL,
+            });
+
+            const secretKey = await this.configService.get("SECRET_KEY");
+            const tokenExpiration = "3h";
+            const verificationToken = this.jwtService.sign({sub: addedUser.id}, {secret: secretKey, expiresIn: tokenExpiration});
+
+            await this.accRegService.sendMail({
+                email: addedUser.email,
+                name: addedUser.name,
+                token: verificationToken
+            });
+        }
+        catch(error) {
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message);
+            }
+
+            throw new InternalServerErrorException("Something went wrong");
+        }
     }
 }
