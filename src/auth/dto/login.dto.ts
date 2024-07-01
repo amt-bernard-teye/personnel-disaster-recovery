@@ -8,7 +8,6 @@ export class LoginDto {
     email: string;
 
     @IsNotEmpty()
-    @IsStrongPassword()
     @ApiProperty()
     password: string;
 }
