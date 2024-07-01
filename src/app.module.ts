@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { SeedersModule } from './seeders/seeders.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({ 
   imports: [
@@ -11,7 +12,8 @@ import { SeedersModule } from './seeders/seeders.module';
     JwtModule.register({global: true}),
     DatabaseModule,
     AuthModule,
-    SeedersModule
+    SeedersModule,
+    SharedModule
   ]
 })
 export class AppModule {}
