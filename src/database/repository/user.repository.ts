@@ -93,8 +93,7 @@ export class UserRepository extends BaseRepository<User, UserProp> implements IS
                 OR: [
                     {id: value},
                     {email: value}
-                ],
-                accountStatus: AccountStatus.VERIFIED
+                ]
             }
         });
 
