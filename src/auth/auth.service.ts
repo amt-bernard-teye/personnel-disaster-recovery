@@ -1,8 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AccountStatus, Role } from '@prisma/client';
-import { compare } from 'bcryptjs';
+import { compare, genSalt, hash } from 'bcryptjs';
 
 import { UserRepository } from 'src/database/repository/user.repository';
 import { RegisterAccount } from './types/register-account.interface';
@@ -24,7 +24,7 @@ export class AuthService {
             const hashedPassword = existingUser ? existingUser.password : "";
             const samePassword = await compare(pass, hashedPassword);
             const isVerified = existingUser ? existingUser.accountStatus === AccountStatus.VERIFIED : false;
-    
+
             if (!existingUser || !samePassword || !isVerified) {
                 throw new BadRequestException("Invalid login credentials");
             }
@@ -67,10 +67,12 @@ export class AuthService {
                 throw new BadRequestException("Email already exist");
             }
 
+            const salt = await genSalt(10);
+            const hashedPassword = await hash(body.password, salt);
             const addedUser = await this.userRepo.add({
                 name: body.name,
                 email: body.email,
-                password: body.password,
+                password: hashedPassword,
                 accountStatus: AccountStatus.PENDING,
                 role: Role.PERSONNEL,
             });
@@ -91,6 +93,23 @@ export class AuthService {
             }
 
             throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
+    async verifyAccount(token: string) {
+        try {
+            const secretKey = await this.configService.get("SECRET_KEY");
+            const result = <{exp: number, sub: string; iat: number}>this.jwtService.verify(token, {secret: secretKey});
+
+            const existingUser = await this.userRepo.find(result.sub);
+            existingUser.accountStatus = AccountStatus.VERIFIED;
+
+            
+            await this.userRepo.update(existingUser);
+            return "Account verified";
+        }
+        catch(error) {
+            throw new UnauthorizedException("Invalid token");
         }
     }
 }

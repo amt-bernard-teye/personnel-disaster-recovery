@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, HttpCode, Post, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Post, Query, UseInterceptors } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LoginDto } from './dto/login.dto';
@@ -35,5 +35,13 @@ export class AuthController {
 
         await this.authService.register(body);
         return "Please check your email to complete your registration";
+    }
+
+    @Get("account-verification")
+    @HttpCode(200)
+    @UseInterceptors(MessageOnlyInterceptor)
+    @ApiTags("Auth")
+    async accountVerification(@Query("token") token: string) {
+        return await this.authService.verifyAccount(token);
     }
 }
