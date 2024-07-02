@@ -8,6 +8,7 @@ import { ResponseMessage } from 'src/shared/decorators/response-message.decorato
 import { DataMessageInterceptor } from 'src/shared/interceptors/data-message.interceptor';
 import { RegisterDto } from './dto/register.dto';
 import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -43,5 +44,13 @@ export class AuthController {
     @ApiTags("Auth")
     async accountVerification(@Query("token") token: string) {
         return await this.authService.verifyAccount(token);
+    }
+
+    @Post("forgot-password")
+    @HttpCode(200)
+    @UseInterceptors(MessageOnlyInterceptor)
+    @ApiTags("Auth")
+    async forgotPassword(@Body() body: ForgotPasswordDto) {
+        return await this.authService.forgotPassword(body.email);
     }
 }

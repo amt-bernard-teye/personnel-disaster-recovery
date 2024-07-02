@@ -8,6 +8,7 @@ import { UserRepository } from 'src/database/repository/user.repository';
 import { RegisterAccount } from './types/register-account.interface';
 import { User } from 'src/shared/interface/user.interface';
 import { RegisterAccountService } from 'src/mailer/service/register-account.service';
+import { ForgotPasswordService } from 'src/mailer/service/forgot-password.service';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,8 @@ export class AuthService {
         private userRepo: UserRepository,
         private configService: ConfigService,
         private jwtService: JwtService,
-        private accRegService: RegisterAccountService
+        private accRegService: RegisterAccountService,
+        private forgotPasswordService: ForgotPasswordService
     ) { }
 
     async login(email: string, pass: string) {
@@ -110,6 +112,36 @@ export class AuthService {
         }
         catch(error) {
             throw new UnauthorizedException("Invalid token");
+        }
+    }
+
+    async forgotPassword(email: string) {
+        try {
+            const existingUser = await this.userRepo.find(email);
+
+            if (!existingUser) {
+                throw new BadRequestException("Email doesn't exist");
+            }
+
+            const tokenDuration = "3h";
+            const secretKey = this.configService.get("SECRET_KEY");
+            const generatedToken = this.jwtService.sign({sub: existingUser.id}, {expiresIn: tokenDuration, secret: secretKey});
+
+            await this.forgotPasswordService.sendMail({
+                email: existingUser.email,
+                name: existingUser.name,
+                token: generatedToken
+            });
+
+            return "Check your email to complete your password reset";
+        }
+        catch(error) {
+            console.log(error);
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message);
+            }
+
+            throw new InternalServerErrorException("Something went wrong");
         }
     }
 }
