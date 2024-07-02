@@ -36,7 +36,7 @@ export class SeedersService {
             return {message: "Admin created"};
         }
         catch(error) {
-            throw new InternalServerErrorException("Something went wrong");
+            throw new InternalServerErrorException("Error: " + error.message);
         }
     }
 }
