@@ -16,7 +16,7 @@ async function bootstrap() {
     .setTitle("Personnel Disaster Recovery Api")
     .setDescription("A system to create a prioritized list of professionals whose skills can sustain normal/regular operations when disaster strikes.")
     .addServer("http://localhost:3000", "local server")
-    .addServer("http://localhost:3000", "online server")
+    .addServer("https://personnel-disaster-recovery.onrender.com", "online server")
     .setVersion("1.0.0")
     .addTag("Auth")
     .addTag("Users")
