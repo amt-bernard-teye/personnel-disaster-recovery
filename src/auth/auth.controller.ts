@@ -9,6 +9,7 @@ import { DataMessageInterceptor } from 'src/shared/interceptors/data-message.int
 import { RegisterDto } from './dto/register.dto';
 import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -52,5 +53,17 @@ export class AuthController {
     @ApiTags("Auth")
     async forgotPassword(@Body() body: ForgotPasswordDto) {
         return await this.authService.forgotPassword(body.email);
+    }
+
+    @Post("reset-password")
+    @HttpCode(200)
+    @UseInterceptors(MessageOnlyInterceptor)
+    @ApiTags("Auth")
+    async resetPassword(@Body() body: ResetPasswordDto, @Query("token") token: string) {
+        if (body.password !== body.confirmPassword) {
+            throw new BadRequestException("Passwords do not match each other");
+        }
+
+        return await this.authService.resetPassword(body.password, token);
     }
 }

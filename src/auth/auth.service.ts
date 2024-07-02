@@ -9,16 +9,21 @@ import { RegisterAccount } from './types/register-account.interface';
 import { User } from 'src/shared/interface/user.interface';
 import { RegisterAccountService } from 'src/mailer/service/register-account.service';
 import { ForgotPasswordService } from 'src/mailer/service/forgot-password.service';
+import { subscribe } from 'diagnostics_channel';
 
 @Injectable()
 export class AuthService {
+    private secretKey: string;
+
     constructor(
         private userRepo: UserRepository,
         private configService: ConfigService,
         private jwtService: JwtService,
         private accRegService: RegisterAccountService,
         private forgotPasswordService: ForgotPasswordService
-    ) { }
+    ) { 
+        this.secretKey = this.configService.get("SECRET_KEY");
+    }
 
     async login(email: string, pass: string) {
         try {
@@ -136,12 +141,33 @@ export class AuthService {
             return "Check your email to complete your password reset";
         }
         catch(error) {
-            console.log(error);
             if (error instanceof BadRequestException) {
                 throw new BadRequestException(error.message);
             }
 
             throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
+    async resetPassword(password: string, token: string) {
+        try {
+            const result = <{sub: string, exp: number, iat: number}>this.jwtService.verify(token, {secret: this.secretKey});
+            const existingUser = await this.userRepo.find(result.sub);
+
+            if (!existingUser) {
+                throw new Error();
+            }
+
+            const salt = await genSalt(10);
+            const hashedPassword = await hash(password, salt);
+
+            existingUser.password = hashedPassword;
+            await this.userRepo.update(existingUser);
+
+            return "Password changed successfully";
+        }
+        catch(error) {
+            throw new BadRequestException("Invalid token");
         }
     }
 }
