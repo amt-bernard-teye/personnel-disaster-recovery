@@ -9,6 +9,7 @@ import { RegisterAccount } from './types/register-account.interface';
 import { User } from 'src/shared/interface/user.interface';
 import { RegisterAccountService } from 'src/mailer/service/register-account.service';
 import { ForgotPasswordService } from 'src/mailer/service/forgot-password.service';
+import { AuthToken } from './enum/auth-token.enum';
 
 @Injectable()
 export class AuthService {
@@ -51,13 +52,15 @@ export class AuthService {
     private createLoginToken(user: User) {
         const accessTokenDuration = "15m";
         const accessToken = this.jwtService.sign({
-            sub: user.id
+            sub: user.id,
+            token: AuthToken.ACCESS
         }, {expiresIn: accessTokenDuration, secret: this.secretKey});
 
         const refreshTokenDuration = "30d";
         const refreshToken = this.jwtService.sign({
             sub: user.id,
-            email: user.email
+            email: user.email,
+            token: AuthToken.REFRESH_TOKEN
         }, {expiresIn: refreshTokenDuration, secret: this.secretKey});
 
         return {accessToken, refreshToken};
