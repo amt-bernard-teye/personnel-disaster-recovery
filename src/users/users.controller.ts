@@ -16,16 +16,16 @@ import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.int
 import { swaggerCheckEmailSuccess, swaggerCheckEmailValidationError } from './swagger/check-email.swagger';
 
 @Controller('users')
+@ApiBearerAuth()
+@ApiTags("Users")
+@UseGuards(AuthGuard)
 export class UsersController {
     constructor(
         private usersService: UsersService
     ) { }
 
     @Get("logged-in")
-    @UseGuards(AuthGuard)
     @UseInterceptors(DataOnlyInterceptor)
-    @ApiTags("Users")
-    @ApiBearerAuth()
     @ApiResponse(swaggerInternalError)
     @ApiResponse(swaggerActiveSuccess)
     loggedInUser(@Req() request: Request) {
@@ -34,11 +34,8 @@ export class UsersController {
     }
 
     @Post("personal")
-    @UseGuards(AuthGuard)
     @ResponseMessage("Successfully updated personal info")
     @UseInterceptors(DataMessageInterceptor)
-    @ApiTags("Users")
-    @ApiBearerAuth()
     @ApiResponse(swaggerInternalError)
     changePersonalInfo(@Req() request: Request, @Body() body: ChangePersonalInfoDto) {
         const user = <User>request["user"];
@@ -46,10 +43,7 @@ export class UsersController {
     }
 
     @Post("check-email")
-    @UseGuards(AuthGuard)
     @UseInterceptors(MessageOnlyInterceptor)
-    @ApiTags("Users")
-    @ApiBearerAuth()
     @ApiResponse(swaggerInternalError)
     @ApiResponse(swaggerCheckEmailSuccess)
     @ApiResponse(swaggerCheckEmailValidationError)
