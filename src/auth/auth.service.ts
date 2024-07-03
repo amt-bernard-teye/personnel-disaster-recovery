@@ -9,7 +9,6 @@ import { RegisterAccount } from './types/register-account.interface';
 import { User } from 'src/shared/interface/user.interface';
 import { RegisterAccountService } from 'src/mailer/service/register-account.service';
 import { ForgotPasswordService } from 'src/mailer/service/forgot-password.service';
-import { subscribe } from 'diagnostics_channel';
 
 @Injectable()
 export class AuthService {
@@ -45,23 +44,21 @@ export class AuthService {
             if (error instanceof BadRequestException) {
                 throw new BadRequestException(error.message);
             }
-
             throw new InternalServerErrorException("Something went wrong");
         }
     }
 
     private createLoginToken(user: User) {
-        const secretKey = this.configService.get("SECRET_KEY");
         const accessTokenDuration = "15m";
         const accessToken = this.jwtService.sign({
             sub: user.id
-        }, {expiresIn: accessTokenDuration, secret: secretKey});
+        }, {expiresIn: accessTokenDuration, secret: this.secretKey});
 
         const refreshTokenDuration = "30d";
         const refreshToken = this.jwtService.sign({
             sub: user.id,
             email: user.email
-        }, {expiresIn: refreshTokenDuration, secret: secretKey});
+        }, {expiresIn: refreshTokenDuration, secret: this.secretKey});
 
         return {accessToken, refreshToken};
     }
@@ -84,39 +81,32 @@ export class AuthService {
                 role: Role.PERSONNEL,
             });
 
-            const secretKey = await this.configService.get("SECRET_KEY");
-            const tokenExpiration = "3h";
-            const verificationToken = this.jwtService.sign({sub: addedUser.id}, {secret: secretKey, expiresIn: tokenExpiration});
-
             await this.accRegService.sendMail({
                 email: addedUser.email,
                 name: addedUser.name,
-                token: verificationToken
+                token: this.generateToken(addedUser)
             });
         }
         catch(error) {
             if (error instanceof BadRequestException) {
                 throw new BadRequestException(error.message);
             }
-
             throw new InternalServerErrorException("Something went wrong");
         }
     }
 
     async verifyAccount(token: string) {
         try {
-            const secretKey = await this.configService.get("SECRET_KEY");
-            const result = <{exp: number, sub: string; iat: number}>this.jwtService.verify(token, {secret: secretKey});
+            const result = <{exp: number, sub: string; iat: number}>this.jwtService.verify(token, {secret: this.secretKey});
 
             const existingUser = await this.userRepo.find(result.sub);
             existingUser.accountStatus = AccountStatus.VERIFIED;
-
             
             await this.userRepo.update(existingUser);
             return "Account verified";
         }
         catch(error) {
-            throw new UnauthorizedException("Invalid token");
+            throw new BadRequestException("Invalid token");
         }
     }
 
@@ -128,14 +118,10 @@ export class AuthService {
                 throw new BadRequestException("Email doesn't exist");
             }
 
-            const tokenDuration = "3h";
-            const secretKey = this.configService.get("SECRET_KEY");
-            const generatedToken = this.jwtService.sign({sub: existingUser.id}, {expiresIn: tokenDuration, secret: secretKey});
-
             await this.forgotPasswordService.sendMail({
                 email: existingUser.email,
                 name: existingUser.name,
-                token: generatedToken
+                token: this.generateToken(existingUser)
             });
 
             return "Check your email to complete your password reset";
@@ -144,9 +130,13 @@ export class AuthService {
             if (error instanceof BadRequestException) {
                 throw new BadRequestException(error.message);
             }
-
             throw new InternalServerErrorException("Something went wrong");
         }
+    }
+
+    generateToken(user: User) {
+        const tokenDuration = "3h";
+        return this.jwtService.sign({sub: user.id}, {expiresIn: tokenDuration, secret: this.secretKey});
     }
 
     async resetPassword(password: string, token: string) {
@@ -168,6 +158,30 @@ export class AuthService {
         }
         catch(error) {
             throw new BadRequestException("Invalid token");
+        }
+    }
+
+    async reSendMail(email: string) {
+        try {
+            const existingUser = await this.userRepo.find(email);
+
+            if (!existingUser) {
+                throw new BadRequestException("Invalid user");
+            }
+
+            await this.accRegService.sendMail({
+                email: existingUser.email,
+                name: existingUser.name,
+                token: this.generateToken(existingUser)
+            });
+
+            return "Email re-send was successful, check your email";
+        }
+        catch(error) {
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message);
+            }
+            throw new InternalServerErrorException("Something went wrong");
         }
     }
 }
