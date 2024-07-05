@@ -1,4 +1,4 @@
-export const swaggerCheckEmailSuccess = {
+export const swaggerChangeImageSuccess = {
     description: "OK",
     status: 200,
     content: {
@@ -6,24 +6,24 @@ export const swaggerCheckEmailSuccess = {
             schema: {
                 type: "object",
                 example: {
-                    message: "Email doesn't exist, you are free to use"
+                    message: "Image uploaded"
                 }
             }
         }
     }
 }
 
-export const swaggerCheckEmailValidationError = {
+export const swaggerChangeImageValidationError = {
     description: "OK",
-    status: 400,
+    status: 500,
     content: {
         "application/json": {
             schema: {
                 type: "object",
                 example: {
-                    message: "Email already exist, try a different one",
+                    message: "Image failed to upload, please try again",
                     error: "Bad Request",
-                    statusCode: 400
+                    statusCode: 500
                 }
             }
         }

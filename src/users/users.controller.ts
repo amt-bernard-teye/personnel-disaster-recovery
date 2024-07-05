@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
@@ -11,9 +11,12 @@ import { UsersService } from './users.service';
 import { User } from 'src/shared/interface/user.interface';
 import { ResponseMessage } from 'src/shared/decorators/response-message.decorator';
 import { DataMessageInterceptor } from 'src/shared/interceptors/data-message.interceptor';
-import { ChangeEmailDto } from './dto/change-email.dto';
 import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
-import { swaggerCheckEmailSuccess, swaggerCheckEmailValidationError } from './swagger/check-email.swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { changeImageValidator, imageUploadConfig } from './image-uploader.multer';
+import { swaggerCheckEmailSuccess, swaggerCheckEmailValidationError } from 'src/auth/dto/check-email.swagger';
+import { ChangeEmailDto } from 'src/auth/dto/change-email.dto';
+import { swaggerChangeImageSuccess, swaggerChangeImageValidationError } from './swagger/change-image.swagger';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -50,5 +53,18 @@ export class UsersController {
     checkEmail(@Req() request: Request, @Body() body: ChangeEmailDto) {
         const user = <User>request["user"];
         return this.usersService.checkEmail(body.email, user);
+    }
+
+    @Post("change-image")
+    @UseInterceptors(FileInterceptor("image", imageUploadConfig))
+    @UseInterceptors(MessageOnlyInterceptor)
+    @ApiResponse(swaggerChangeImageSuccess)
+    @ApiResponse(swaggerChangeImageValidationError)
+    async changeImage(
+        @Req() request: Request,
+        @UploadedFile(changeImageValidator) file: Express.Multer.File
+    ) {
+        const user = request["user"];
+        return await this.usersService.changeImage(file, user);
     }
 }
