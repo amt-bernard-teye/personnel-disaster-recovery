@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { unlink } from 'fs/promises';
 
 import { UserRepository } from 'src/database/repository/user.repository';
 import { User } from 'src/shared/interface/user.interface';
@@ -12,7 +11,7 @@ export class UsersService {
     constructor(
         private userRepo: UserRepository,
         private awsS3Service: AwsS3Service,
-        private configService: ConfigService
+        private configService: ConfigService,
     ) { }
 
     async changePersonalInfo(name: string, email: string, existingUser: User) {
