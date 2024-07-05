@@ -18,7 +18,7 @@ import { UsersModule } from './users/users.module';
     SeedersModule,
     SharedModule,
     MailerModule,
-    UsersModule
+    UsersModule,
   ]
 })
 export class AppModule {}
