@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, Post, Query, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Headers, HttpCode, Post, Query, Req, UnauthorizedException, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LoginDto } from './dto/login.dto';
@@ -19,6 +19,8 @@ import { swaggerForgotPasswordSuccess, swaggerForgotPasswordValidationError } fr
 import { swaggerResetPasswordSuccess, swaggerResetPasswordValidationError } from './swagger/reset-password.swagger';
 import { swaggerCheckEmailSuccess, swaggerCheckEmailValidationError } from 'src/auth/dto/check-email.swagger';
 import { ChangeEmailDto } from './dto/change-email.dto';
+import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.interceptor';
+import { swaggerRefreshTokenSuccess, swaggerRefreshTokenValidationError } from './swagger/refresh-token.swagger';
 
 @Controller('auth')
 @ApiTags("Auth")
@@ -106,5 +108,19 @@ export class AuthController {
     @ApiResponse(swaggerCheckEmailValidationError)
     checkEmail(@Body(ValidationPipe) body: ChangeEmailDto) {
         return this.authService.checkEmail(body.email);
+    }
+
+    @Get("token-refresh")
+    @UseInterceptors(DataOnlyInterceptor)
+    @ApiResponse(swaggerRefreshTokenSuccess)
+    @ApiResponse(swaggerRefreshTokenValidationError)
+    async refreshToken(@Headers("authorization") authorization: string) {
+        const [bearer, refreshToken] = authorization ? authorization.split(" ") : [];
+
+        if (bearer !== "Bearer" || refreshToken === "") {
+            throw new UnauthorizedException("Access denied");
+        }
+
+        return await this.authService.refreshToken(refreshToken);
     }
 }

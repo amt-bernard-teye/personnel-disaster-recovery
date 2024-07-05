@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AccountStatus, Role } from '@prisma/client';
@@ -10,6 +10,7 @@ import { User } from 'src/shared/interface/user.interface';
 import { RegisterAccountService } from 'src/mailer/service/register-account.service';
 import { ForgotPasswordService } from 'src/mailer/service/forgot-password.service';
 import { AuthToken } from './enum/auth-token.enum';
+import { RefreshTokenPayload } from './types/refresh-token-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -203,6 +204,25 @@ export class AuthService {
                 throw new BadRequestException(error.message);
             }
             throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
+    async refreshToken(refreshToken: string) {
+        try {
+            const secretKey = this.configService.get("SECRET_KEY");
+            const result = <RefreshTokenPayload>await this.jwtService.verify(refreshToken, {secret: secretKey});
+            const user = await this.userRepo.find(result.sub);
+
+            const accessTokenDuration = "15m";
+            const accessToken = this.jwtService.sign({
+                sub: user.id,
+                token: AuthToken.ACCESS
+            }, {expiresIn: accessTokenDuration, secret: secretKey});
+
+            return accessToken;
+        }
+        catch(error) {
+            throw new UnauthorizedException("Access Denied");
         }
     }
 }
