@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { AccountStatus, Role } from '@prisma/client';
@@ -179,6 +179,24 @@ export class AuthService {
             });
 
             return "Email re-send was successful, check your email";
+        }
+        catch(error) {
+            if (error instanceof BadRequestException) {
+                throw new BadRequestException(error.message);
+            }
+            throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
+    async checkEmail(email: string) {
+        try {
+            const fetchedUser = await this.userRepo.find(email);
+
+            if (fetchedUser) {
+                throw new BadRequestException("Email already exist, try a different one");
+            }
+
+            return "Email doesn't exist, you are free to use it";
         }
         catch(error) {
             if (error instanceof BadRequestException) {

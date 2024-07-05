@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, Post, Query, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Post, Query, Req, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LoginDto } from './dto/login.dto';
@@ -17,8 +17,11 @@ import { swaggerReSendMailSuccess, swaggerReSendMailValidationError } from './sw
 import { swaggerAccountVerificationSuccess, swaggerAccountVerificationValidationError } from './swagger/account-verification.swagger';
 import { swaggerForgotPasswordSuccess, swaggerForgotPasswordValidationError } from './swagger/forgot-passowrd.swagger';
 import { swaggerResetPasswordSuccess, swaggerResetPasswordValidationError } from './swagger/reset-password.swagger';
+import { swaggerCheckEmailSuccess, swaggerCheckEmailValidationError } from 'src/auth/dto/check-email.swagger';
+import { ChangeEmailDto } from './dto/change-email.dto';
 
 @Controller('auth')
+@ApiTags("Auth")
 export class AuthController {
     constructor(private authService: AuthService) {}
 
@@ -29,7 +32,6 @@ export class AuthController {
     @ApiResponse(swaggerLoginSuccess)
     @ApiResponse(swaggerInternalError)
     @ApiResponse(swaggerLoginValidationError)
-    @ApiTags("Auth")
     async login(@Body(ValidationPipe) body: LoginDto) {
         return await this.authService.login(body.email, body.password);
     }
@@ -89,11 +91,20 @@ export class AuthController {
     @Post("re-send-mail")
     @HttpCode(200)
     @UseInterceptors(MessageOnlyInterceptor)
-    @ApiTags("Auth")
     @ApiResponse(swaggerInternalError)
     @ApiResponse(swaggerReSendMailSuccess)
     @ApiResponse(swaggerReSendMailValidationError)
     async reSendMail(@Body(ValidationPipe) body: ReSendMailDto) {
         return await this.authService.reSendMail(body.email);
+    }
+
+    @Post("check-email")
+    @HttpCode(200)
+    @UseInterceptors(MessageOnlyInterceptor)
+    @ApiResponse(swaggerInternalError)
+    @ApiResponse(swaggerCheckEmailSuccess)
+    @ApiResponse(swaggerCheckEmailValidationError)
+    checkEmail(@Body(ValidationPipe) body: ChangeEmailDto) {
+        return this.authService.checkEmail(body.email);
     }
 }
