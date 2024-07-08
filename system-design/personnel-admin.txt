@@ -1,0 +1,43 @@
+-------------------------------------------
+****** Personnel and Admin Features *******
+-------------------------------------------
+NB: Reports would be prepared based on personnel or emergency occurred
+
+1. The personnel fills the form
+2. Await for approval of provided data from the form by Admin
+3. Once approved the following applies
+-- Personnel
+NB: The configured profession to specific emergency type. Meaning the Job Title will be selected by the profession
+NB: When a personnel is dispatched, his status should be marked as unavailable until his previous emergency is done attended to.
+1.  Gets notification and accepts the emergency so as they will be dispatched.
+
+-- Admin
+1. Add the various emergency type using the name and status [ACTIVE, REMOVED]
+2. Configure Profession for specific emergency by connecting profession to specific emergencies that could happen
+3. Admin can add a happened emergency with the following info (emergency type, location, external name && phone number, expiration date, added date, description)
+4. Admin will see approved personnel for added emergency.
+5. After final collection of personnel information the admin will dispatch personnels by having the system send them mails with the details of the emergency. 
+
+-------------------------------------------
+**** End Personnel and Admin Features *****
+-------------------------------------------
+
+
+--------------------------------
+****** Ranking algorithm *******
+--------------------------------
+NB: [LOW = 1, MEDIUM = 2, HIGH = 3]
+[Projects ever worked on (High priority), Job Title, Years of Experience (Low priority)]
+
+-- High
+Year of Experience >= 10
+Projects worked on >= 20
+
+-- Medium
+Year of Experience >= 5
+Projects worked on >= 10
+
+-- LOW
+Year of Experience below 5
+Projects worked on below 10
+
