@@ -46,9 +46,11 @@ model Personnel {
   digitalAddress String
   userId String @unique
   user User @relation(fields: [userId], references: [id])
-  image String
   status PersonnelStatus  @default(PENDING)
   availability AvailabilityStatus @default(AVAILABLE)
+  personnelProfession PersonnelProfession?
+  educationalBackground EducationalBackground?
+  projects Project[]
 
   @@map("personnels")
 }
@@ -62,4 +64,68 @@ enum PersonnelStatus {
 enum AvailabilityStatus {
   AVAILABLE
   UNAVAILABLE
+}
+
+model EmergencyType {
+  id Int @id @default(autoincrement())
+  name String
+  status EmergencyTypeStatus @default(ACTIVE)
+  professions Profession[]
+
+  @@map("emergency_types")
+}
+
+enum EmergencyTypeStatus {
+  ACTIVE
+  REMOVED
+}
+
+model Profession {
+  id Int @id @default(autoincrement())
+  name String
+  emergencyId Int
+  emergency EmergencyType @relation(fields: [emergencyId], references: [id])
+  personnnelProfession PersonnelProfession[]
+
+  @@map("professions")
+}
+
+model PersonnelProfession {
+  employee_id String @id
+  experienceYears Int
+  employer_name String
+  employer_email String
+  personnelId Int @unique
+  personnel Personnel @relation(fields: [personnelId], references: [id])
+  professionId Int
+  profession Profession @relation(fields: [professionId], references: [id])
+  currrentPosition CurrentPosition
+
+  @@map("personnnel_profession")
+}
+
+enum CurrentPosition {
+  JUNIOR
+  ASSOCIATE
+  EXPERT
+}
+
+model EducationalBackground {
+  id Int @id @default(autoincrement())
+  qualification String
+  studyField String
+  personnelId Int @unique
+  personnel Personnel @relation(fields: [personnelId], references: [id])
+
+  @@map("educational_background")
+}
+
+model Project {
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  personnelId Int
+  personnel Personnel @relation(fields: [personnelId], references: [id])
+
+  @@map("projects")
 }
