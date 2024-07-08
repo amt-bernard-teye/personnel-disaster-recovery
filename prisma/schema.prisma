@@ -40,10 +40,8 @@ model Personnel {
   id Int @id @default(autoincrement())
   phoneNumber String
   houseNumber String
-  nationality String
   gender Gender
   dob DateTime
-  region String
   town String
   digitalAddress String
   userId String @unique
