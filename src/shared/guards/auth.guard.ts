@@ -4,17 +4,17 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
 import { UserRepository } from "src/database/repository/user.repository";
-import { JwtTokenPayload } from "./interface/jwt-token-payload.interface";
+import { JwtTokenPayload } from "../interface/jwt-token-payload.interface";
 import { AuthToken } from "src/auth/enum/auth-token.enum";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    private secretKey;
+    private secretKey: string;
 
     constructor(
         private userRepo: UserRepository,
         private configService: ConfigService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
     ) { 
         this.secretKey = this.configService.get("SECRET_KEY");
     }

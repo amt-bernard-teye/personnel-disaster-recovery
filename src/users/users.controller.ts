@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseIntercept
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
-import { AuthGuard } from 'src/shared/auth.guard';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.interceptor';
 import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger';
 import { swaggerActiveSuccess } from './swagger/active.swagger';
