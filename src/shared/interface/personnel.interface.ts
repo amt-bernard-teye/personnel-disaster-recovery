@@ -1,11 +1,11 @@
-import { AvailabilityStatus, PersonnelStatus } from "@prisma/client";
+import { AvailabilityStatus, Gender, PersonnelStatus } from "@prisma/client";
 
 export type Personnel = {
     id?: number;
     phoneNumber: string;
     houseNumber: string;
-    gender: string;
-    dob: string;
+    gender: Gender;
+    dob: Date;
     town: string;
     digitalAddress: string;
     userId: string;
