@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { EmergencyTypeController } from './emergency-type.controller';
 
-@Module({})
+@Module({
+  controllers: [EmergencyTypeController]
+})
 export class EmergencyTypeModule {}
