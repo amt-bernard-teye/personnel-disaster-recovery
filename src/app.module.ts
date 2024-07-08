@@ -9,6 +9,7 @@ import { SharedModule } from './shared/shared.module';
 import { MailerModule } from './mailer/mailer.module';
 import { UsersModule } from './users/users.module';
 import { PersonnelModule } from './personnel/personnel.module';
+import { EmergencyTypeModule } from './emergency-type/emergency-type.module';
 
 @Module({ 
   imports: [
@@ -21,6 +22,7 @@ import { PersonnelModule } from './personnel/personnel.module';
     MailerModule,
     UsersModule,
     PersonnelModule,
+    EmergencyTypeModule,
   ]
 })
 export class AppModule {}
