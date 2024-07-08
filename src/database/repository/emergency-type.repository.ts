@@ -9,7 +9,7 @@ import { ISearchable } from "../interface/searchable.interface";
 
 @Injectable()
 export class EmergencyTypeRepository extends BaseRepository<EmergencyType, EmergencyTypeProp>
-    implements ISingleFinder<number, EmergencyType>, IMultipleFinder<EmergencyType>, ISearchable<EmergencyType> {
+    implements ISingleFinder<number | string, EmergencyType>, IMultipleFinder<EmergencyType>, ISearchable<EmergencyType> {
     selectProps(): EmergencyTypeProp {
         return {
             id: true,
@@ -66,12 +66,15 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
         await this.close();
     }
 
-    async find(entityId: number): Promise<EmergencyType> {
+    async find(value: number | string): Promise<EmergencyType> {
         const prisma = this.open();
 
         const emergencyType = await prisma.emergencyType.findFirst({
             where: {
-                id: entityId
+                OR: [
+                    {id: +value},
+                    {name: value.toString()},
+                ]
             },
             select: this.selectProps()
         });
