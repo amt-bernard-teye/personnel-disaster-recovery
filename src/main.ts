@@ -22,6 +22,7 @@ async function bootstrap() {
     .addTag("Users")
     .addTag("Seeders")
     .addTag("Personnel")
+    .addTag("Emergency Type")
     .addBearerAuth()
     .build();
 
