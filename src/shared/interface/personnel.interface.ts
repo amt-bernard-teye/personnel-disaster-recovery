@@ -1,3 +1,5 @@
+import { AvailabilityStatus, PersonnelStatus } from "@prisma/client";
+
 export type Personnel = {
     id?: number;
     phoneNumber: string;
@@ -7,6 +9,9 @@ export type Personnel = {
     town: string;
     digitalAddress: string;
     userId: string;
+    image: string;
+    status?: PersonnelStatus;
+    availability?: AvailabilityStatus;
 }
 
 export type PersonnelProp = {
@@ -18,4 +23,7 @@ export type PersonnelProp = {
     town: boolean;
     digitalAddress: boolean;
     userId: boolean;
+    image: boolean;
+    status: boolean;
+    availability: boolean;
 }
