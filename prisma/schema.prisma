@@ -46,6 +46,20 @@ model Personnel {
   digitalAddress String
   userId String @unique
   user User @relation(fields: [userId], references: [id])
+  image String
+  status PersonnelStatus  @default(PENDING)
+  availability AvailabilityStatus @default(AVAILABLE)
 
   @@map("personnels")
+}
+
+enum PersonnelStatus {
+  PENDING
+  APPROVE
+  DISAPPROVE
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  UNAVAILABLE
 }
