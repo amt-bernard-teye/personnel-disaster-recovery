@@ -45,12 +45,13 @@ Projects worked on below 10
 ------------------------------
 ****** Database Design *******
 ------------------------------
-- Personnel (id, image, dob, phone_number, house_address, gender, status[PENDING, APPROVED, DISAPPROVED], availability[AVAILABLE, UNAVAILABLE])
+- Personnel (id, dob, phone_number, house_address, gender, status[PENDING, APPROVED, DISAPPROVED], availability[AVAILABLE, UNAVAILABLE])
 - Personnel_Professional_Info (id, job title, current_position, years, employee id, employer_email, personnel_id)
 - Educational Background (id, qualification, field of study, personnel_id)
 - Projects (id, project_title, description, personnel_id)
-- Spoken Languages (id, language, personnel_id)
 - Emergency_Type (id, name, status[ACTIVE, REMOVED])
 - Profession (id, name, emergency_id)
+
+------- *** remaining tables to add *** ---------
 - Happened_Emergency (id, created_at, location, emergency_id, description, manager name, phone_number)
 - Personnel_Happened_Emergency (id, happened_id, personnel_id) 
