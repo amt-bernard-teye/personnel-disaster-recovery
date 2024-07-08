@@ -7,7 +7,7 @@ NB: Reports would be prepared based on personnel or emergency occurred
 2. Await for approval of provided data from the form by Admin
 3. Once approved the following applies
 -- Personnel
-NB: The configured profession to specific emergency type. Meaning the Job Title will be selected by the profession
+NB: Configure profession to specific emergency type. Meaning the Job Title will be selected by the profession
 NB: When a personnel is dispatched, his status should be marked as unavailable until his previous emergency is done attended to.
 1.  Gets notification and accepts the emergency so as they will be dispatched.
 
@@ -26,7 +26,7 @@ NB: When a personnel is dispatched, his status should be marked as unavailable u
 --------------------------------
 ****** Ranking algorithm *******
 --------------------------------
-NB: [LOW = 1, MEDIUM = 2, HIGH = 3]
+NB: [LOW = 1, MEDIUM = 2, HIGH = 3] 
 [Projects ever worked on (High priority), Job Title, Years of Experience (Low priority)]
 
 -- High
@@ -41,3 +41,16 @@ Projects worked on >= 10
 Year of Experience below 5
 Projects worked on below 10
 
+
+------------------------------
+****** Database Design *******
+------------------------------
+- Personnel (id, image, dob, phone_number, house_address, gender, status[PENDING, APPROVED, DISAPPROVED], availability[AVAILABLE, UNAVAILABLE])
+- Personnel_Professional_Info (id, job title, current_position, years, employee id, employer_email, personnel_id)
+- Educational Background (id, qualification, field of study, personnel_id)
+- Projects (id, project_title, description, personnel_id)
+- Spoken Languages (id, language, personnel_id)
+- Emergency_Type (id, name, status[ACTIVE, REMOVED])
+- Profession (id, name, emergency_id)
+- Happened_Emergency (id, created_at, location, emergency_id, description, manager name, phone_number)
+- Personnel_Happened_Emergency (id, happened_id, personnel_id) 
