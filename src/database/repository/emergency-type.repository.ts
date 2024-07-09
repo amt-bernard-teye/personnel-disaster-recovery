@@ -41,7 +41,8 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
                 id: entity.id
             },
             data: {
-                name: entity.name
+                name: entity.name,
+                status: entity.status
             },
             select: this.selectProps()
         });
@@ -68,13 +69,11 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
 
     async find(value: number | string): Promise<EmergencyType> {
         const prisma = this.open();
+        const filter = typeof value === "number" ? {id: value} : {name: value};
 
         const emergencyType = await prisma.emergencyType.findFirst({
             where: {
-                OR: [
-                    {id: +value},
-                    {name: value.toString()},
-                ]
+                ...filter
             },
             select: this.selectProps()
         });
@@ -84,8 +83,10 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
         return emergencyType;
     }
 
-    async findAll(page: number, rows: number): Promise<EmergencyType[]> {
+    async findAll(page: number): Promise<EmergencyType[]> {
         const prisma = this.open();
+
+        const rows = 9;
 
         const emergencyTypes = await prisma.emergencyType.findMany({
             skip: page * rows,
@@ -101,7 +102,7 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
     async count(): Promise<number> {
         const prisma = this.open();
 
-        const rows = await prisma.user.count();
+        const rows = await prisma.emergencyType.count();
         
         await this.close();
 
