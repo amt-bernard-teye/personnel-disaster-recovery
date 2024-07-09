@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ProfessionsController } from './professions.controller';
 
-@Module({})
+@Module({
+  controllers: [ProfessionsController]
+})
 export class ProfessionsModule {}
