@@ -86,6 +86,7 @@ model Profession {
   emergencyId Int
   emergency EmergencyType @relation(fields: [emergencyId], references: [id])
   personnnelProfession PersonnelProfession[]
+  status AvailabilityStatus @default(AVAILABLE)
 
   @@map("professions")
 }
