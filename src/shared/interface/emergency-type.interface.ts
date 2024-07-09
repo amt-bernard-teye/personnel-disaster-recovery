@@ -3,7 +3,7 @@ import { EmergencyTypeStatus } from "@prisma/client";
 export type EmergencyType = {
     id?: number;
     name: string;
-    status: EmergencyTypeStatus
+    status?: EmergencyTypeStatus
 }
 
 export type EmergencyTypeProp = {
