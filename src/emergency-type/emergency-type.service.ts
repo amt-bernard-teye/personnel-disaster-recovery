@@ -5,6 +5,21 @@ import { EmergencyTypeRepository } from 'src/database/repository/emergency-type.
 export class EmergencyTypeService {
     constructor(private emergencyTypeRepo: EmergencyTypeRepository) {}
 
+    async findAll(page: number) {
+        try {
+            const emergencies = await this.emergencyTypeRepo.findAll(page);
+            const rows = await this.emergencyTypeRepo.count();
+
+            return {
+                count: rows,
+                emergencyTypes: emergencies
+            };
+        }
+        catch(error) {
+            throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
     async create(name: string) {
         try {
             const existingType = await this.emergencyTypeRepo.find(name);
@@ -18,10 +33,31 @@ export class EmergencyTypeService {
             });
         }
         catch(error) {
-            if (error instanceof BadRequestException) {
-                throw new BadRequestException(error.message);
+            this.throwException(error);
+            throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
+    private throwException(error: BadRequestException) {
+        if (error instanceof BadRequestException) {
+            throw new BadRequestException(error.message);
+        }
+    }
+
+    async update(name: string, id: number) {
+        try {
+            const existingType = await this.emergencyTypeRepo.find(id);
+
+            if (!existingType) {
+                throw new BadRequestException("Emergency type already exist");
             }
 
+            existingType.name = name;
+
+            return await this.emergencyTypeRepo.update(existingType);
+        }
+        catch(error) {
+            this.throwException(error);
             throw new InternalServerErrorException("Something went wrong");
         }
     }
