@@ -19,11 +19,11 @@ async function bootstrap() {
     .addServer("https://personnel-disaster-recovery.onrender.com", "online server")
     .setVersion("1.0.0")
     .addTag("Auth")
-    .addTag("Users")
-    .addTag("Seeders")
-    .addTag("Personnel")
     .addTag("Emergency Type")
+    .addTag("Personnel")
     .addTag("Profession")
+    .addTag("Seeders")
+    .addTag("Users")
     .addBearerAuth()
     .build();
 
