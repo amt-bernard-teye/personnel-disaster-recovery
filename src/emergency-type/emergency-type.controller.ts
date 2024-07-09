@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 
@@ -14,17 +14,18 @@ import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger'
 import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.interceptor';
 import { swaggerFetchEmergencySuccess } from './swagger/fetch-emergency.swagger';
 import { swaggerUpdateEmergencySuccess, swaggerUpdateEmergencyValidationError } from './swagger/update-emergency.swagger';
+import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
+import { swaggerDeleteEmergencySuccess, swaggerDeleteEmergencyValidationError } from './swagger/delete-emergency.swagger';
 
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
+@UseGuards(AuthGuard, RolesGuard)
+@Roles([Role.ADMIN])
 @Controller('emergency-types')
 @ApiTags("Emergency Type")
 export class EmergencyTypeController {
     constructor(private emergencyTypeService: EmergencyTypeService) {}
 
     @Get()
-    @Roles([Role.ADMIN, Role.PERSONNEL])
-    @UseGuards(RolesGuard)
     @UseInterceptors(DataOnlyInterceptor)
     @ApiResponse(swaggerInternalError)
     @ApiResponse(swaggerFetchEmergencySuccess)
@@ -39,8 +40,6 @@ export class EmergencyTypeController {
     }
     
     @Post()
-    @Roles([Role.ADMIN])
-    @UseGuards(RolesGuard)
     @ResponseMessage("Added emergency type successfully")
     @UseInterceptors(DataMessageInterceptor)
     @ApiResponse(swaggerInternalError)
@@ -57,5 +56,14 @@ export class EmergencyTypeController {
     @ApiResponse(swaggerUpdateEmergencyValidationError)
     async update(@Param("id", ParseIntPipe) id: string, @Body(ValidationPipe) body: EmergencyTypeDto) {
         return await this.emergencyTypeService.update(body.name, +id);
+    }
+
+    @Delete(":id")
+    @UseInterceptors(MessageOnlyInterceptor)
+    @ApiResponse(swaggerInternalError)
+    @ApiResponse(swaggerDeleteEmergencySuccess)
+    @ApiResponse(swaggerDeleteEmergencyValidationError)
+    async delete(@Param("id", ParseIntPipe) id: string) {
+        return await this.emergencyTypeService.delete(+id);
     }
 }

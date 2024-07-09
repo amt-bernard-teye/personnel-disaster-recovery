@@ -61,4 +61,15 @@ export class EmergencyTypeService {
             throw new InternalServerErrorException("Something went wrong");
         }
     }
+
+    async delete(id: number) {
+        try {
+            await this.emergencyTypeRepo.delete(id);
+            return "Emergency type deleted successfully";
+        }
+        catch(error) {
+            this.throwException(error);
+            throw new InternalServerErrorException("Something went wrong");
+        }
+    }
 }
