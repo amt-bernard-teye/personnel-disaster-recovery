@@ -10,6 +10,7 @@ import { MailerModule } from './mailer/mailer.module';
 import { UsersModule } from './users/users.module';
 import { PersonnelModule } from './personnel/personnel.module';
 import { EmergencyTypeModule } from './emergency-type/emergency-type.module';
+import { ProfessionsModule } from './professions/professions.module';
 
 @Module({ 
   imports: [
@@ -23,6 +24,7 @@ import { EmergencyTypeModule } from './emergency-type/emergency-type.module';
     UsersModule,
     PersonnelModule,
     EmergencyTypeModule,
+    ProfessionsModule,
   ]
 })
 export class AppModule {}
