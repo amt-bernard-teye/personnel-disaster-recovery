@@ -16,7 +16,7 @@ import { swaggerFetchEmergencySuccess } from './swagger/fetch-emergency.swagger'
 import { swaggerUpdateEmergencySuccess, swaggerUpdateEmergencyValidationError } from './swagger/update-emergency.swagger';
 import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
 import { swaggerDeleteEmergencySuccess, swaggerDeleteEmergencyValidationError } from './swagger/delete-emergency.swagger';
-import pageParser from 'src/shared/util/page-parser.util';
+import { pageParser } from 'src/shared/util/page-parser.util';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RolesGuard)
