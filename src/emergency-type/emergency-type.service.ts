@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { EmergencyTypeRepository } from 'src/database/repository/emergency-type.repository';
+import { throwException } from 'src/shared/util/handle-bad-request.util';
 
 @Injectable()
 export class EmergencyTypeService {
@@ -33,14 +34,8 @@ export class EmergencyTypeService {
             });
         }
         catch(error) {
-            this.throwException(error);
+            throwException(error);
             throw new InternalServerErrorException("Something went wrong");
-        }
-    }
-
-    private throwException(error: BadRequestException) {
-        if (error instanceof BadRequestException) {
-            throw new BadRequestException(error.message);
         }
     }
 
@@ -57,7 +52,7 @@ export class EmergencyTypeService {
             return await this.emergencyTypeRepo.update(existingType);
         }
         catch(error) {
-            this.throwException(error);
+            throwException(error);
             throw new InternalServerErrorException("Something went wrong");
         }
     }
@@ -68,7 +63,7 @@ export class EmergencyTypeService {
             return "Emergency type deleted successfully";
         }
         catch(error) {
-            this.throwException(error);
+            throwException(error);
             throw new InternalServerErrorException("Something went wrong");
         }
     }
