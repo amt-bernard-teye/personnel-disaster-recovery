@@ -117,6 +117,7 @@ model EducationalBackground {
   studyField String
   personnelId Int @unique
   personnel Personnel @relation(fields: [personnelId], references: [id])
+  graduationYear Int @map("graduation_year")
 
   @@map("educational_background")
 }
