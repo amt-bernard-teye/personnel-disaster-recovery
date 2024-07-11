@@ -11,6 +11,18 @@ export class ProfessionsService {
         private emergencyTypeRepo: EmergencyTypeRepository
     ) { }
 
+    async findAll(page: number) {
+        try {
+            const count = await this.professionRepo.count();
+            const professions = await this.professionRepo.findAll(page);
+
+            return { count, professions };
+        }
+        catch(error) {
+            throw new InternalServerErrorException("Something went wrong");
+        }
+    }
+
     async create(name: string, emergencyId: number) {
         try {
             const existingEmergency = await this.emergencyTypeRepo.find(emergencyId);
@@ -24,7 +36,6 @@ export class ProfessionsService {
         }
         catch(error) {
             throwException(error);
-            throw new InternalServerErrorException("Something went wrong");
         }
     }
 }
