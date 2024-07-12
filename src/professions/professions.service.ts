@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { AvailabilityStatus } from '@prisma/client';
 
 import { EmergencyTypeRepository } from 'src/database/repository/emergency-type.repository';
 import { ProfessionRespository } from 'src/database/repository/profession.repository';
@@ -56,6 +57,23 @@ export class ProfessionsService {
             existingProfession.name = profession.name;
 
             return await this.professionRepo.update(existingProfession);
+        }
+        catch(error) {
+            throwException(error);
+        }
+    }
+
+    async delete(id: number) {
+        try {
+            const existingProfession = await this.professionRepo.find(id);
+
+            if (!existingProfession || existingProfession.status === AvailabilityStatus.AVAILABLE) {
+                throw new BadRequestException("Profession doesn't exist");
+            }
+
+            await this.professionRepo.delete(id);
+
+            return "Profession deleted successfully";
         }
         catch(error) {
             throwException(error);

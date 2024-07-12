@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from 'src/shared/guards/auth.guard';
@@ -12,6 +12,8 @@ import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.intercept
 import { pageParser } from 'src/shared/util/page-parser.util';
 import { swaggerFetchProfessionSuccess } from './swagger/fetch-profession.swagger';
 import { swaggerUpdateProfessionSuccess, swaggerUpdateProfessionValidationError } from './swagger/update-profession.swagger';
+import { swaggerDeleteProfessionSuccess, swaggerDeleteProfessionValidationError } from './swagger/delete-profession.swagger';
+import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
 
 @Controller('professions')
 @UseGuards(AuthGuard)
@@ -50,5 +52,15 @@ export class ProfessionsController {
             name: body.name,
             emergencyId: +body.emergencyId
         });
+    }
+
+    @Delete(":id")
+    @ResponseMessage("Profession deleted successfully")
+    @UseInterceptors(MessageOnlyInterceptor)
+    @ApiResponse(swaggerInternalError)
+    @ApiResponse(swaggerDeleteProfessionSuccess)
+    @ApiResponse(swaggerDeleteProfessionValidationError)
+    delete(@Param("id", ParseIntPipe) id: string) {
+        return this.professionsService.delete(+id);
     }
 }
