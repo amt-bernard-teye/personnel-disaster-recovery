@@ -47,7 +47,7 @@ Projects worked on below 10
 ------------------------------
 - Personnel (id, dob, phone_number, house_address, gender, status[PENDING, APPROVED, DISAPPROVED], availability[AVAILABLE, UNAVAILABLE])
 - Personnel_Professional_Info (id, job title, current_position, years, employee id, employer_email, personnel_id)
-- Educational Background (id, qualification, field of study, personnel_id)
+- Educational Background (id, qualification, field of study, personnel_id, year_of_grad)
 - Projects (id, project_title, description, personnel_id)
 - Emergency_Type (id, name, status[ACTIVE, REMOVED])
 - Profession (id, name, emergency_id)
