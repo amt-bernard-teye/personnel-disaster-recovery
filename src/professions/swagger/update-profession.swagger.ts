@@ -6,7 +6,7 @@ export const swaggerUpdateProfessionSuccess = {
             schema: {
                 type: "object",
                 example: {
-                    message: "Profession was added successfully",
+                    message: "Profession updated successfully",
                     data: {
                         id: 1,
                         name: "Doctor",
