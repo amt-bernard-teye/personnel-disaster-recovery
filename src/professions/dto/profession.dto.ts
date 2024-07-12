@@ -8,7 +8,7 @@ export class ProfessionDto {
     name: string;
 
     @IsNotEmpty()
+    @IsNumber()
     @ApiProperty()
-    @Matches(/^[0-9]*$/)
     emergencyId: string;
 }
