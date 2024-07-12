@@ -16,5 +16,4 @@ export abstract class BaseRepository<Type, TypeProp> {
     abstract selectProps(): TypeProp;
     abstract add(entity: Type): Promise<Type>;
     abstract update(entity: Type): Promise<Type>;
-    abstract delete(id: string | number): Promise<void>;
 }

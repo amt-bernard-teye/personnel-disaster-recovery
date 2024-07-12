@@ -6,10 +6,11 @@ import { BaseRepository } from "./base.repository";
 import { ISingleFinder } from "../interface/single-finder.interface";
 import { IMultipleFinder } from "../interface/multiple-finder.interface";
 import { ISearchable } from "../interface/searchable.interface";
+import { IDeleteEntity } from "../interface/delete-entity.interface";
 
 @Injectable()
 export class EmergencyTypeRepository extends BaseRepository<EmergencyType, EmergencyTypeProp>
-    implements ISingleFinder<number | string, EmergencyType>, IMultipleFinder<EmergencyType>, ISearchable<EmergencyType> {
+    implements ISingleFinder<number | string, EmergencyType>, IMultipleFinder<EmergencyType>, ISearchable<EmergencyType>, IDeleteEntity {
     selectProps(): EmergencyTypeProp {
         return {
             id: true,

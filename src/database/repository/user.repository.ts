@@ -4,9 +4,11 @@ import { Injectable } from "@nestjs/common";
 import { User, UserProp } from "src/shared/interface/user.interface";
 import { BaseRepository } from "./base.repository";
 import { ISingleFinder } from "../interface/single-finder.interface";
+import { IDeleteEntity } from "../interface/delete-entity.interface";
 
 @Injectable()
-export class UserRepository extends BaseRepository<User, UserProp> implements ISingleFinder<string, User> {
+export class UserRepository extends BaseRepository<User, UserProp> 
+    implements ISingleFinder<string, User>, IDeleteEntity {
     selectProps(): UserProp {
         return {
             id: true,

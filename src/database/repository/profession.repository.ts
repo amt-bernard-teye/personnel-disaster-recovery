@@ -5,10 +5,11 @@ import { Profession, ProfessionProp } from "src/shared/interface/profession.inte
 import { BaseRepository } from "./base.repository";
 import { ISingleFinder } from "../interface/single-finder.interface";
 import { IMultipleFinder } from "../interface/multiple-finder.interface";
+import { IDeleteEntity } from "../interface/delete-entity.interface";
 
 @Injectable()
 export class ProfessionRespository extends BaseRepository<Profession, ProfessionProp>
-    implements ISingleFinder<number, Profession>, IMultipleFinder<Profession> {
+    implements ISingleFinder<number, Profession>, IMultipleFinder<Profession>, IDeleteEntity {
     selectProps(): ProfessionProp {
         return {
             id: true,
