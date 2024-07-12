@@ -3,11 +3,12 @@ export type EducationBackground = {
     qualification: string;
     studyField: string;
     personnelId: number;
+    graduationYear: number;
 }
 
 export type EducationBackgroundProp = {
-    id: boolean;
     qualification: boolean;
     studyField: boolean;
     personnelId: boolean;
+    graduationYear: boolean;
 }
