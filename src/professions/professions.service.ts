@@ -29,8 +29,8 @@ export class ProfessionsService {
         try {
             const existingEmergency = await this.emergencyTypeRepo.find(emergencyId);
             
-            if (existingEmergency) {
-                throw new BadRequestException("Emergency alread exist");
+            if (!existingEmergency) {
+                throw new BadRequestException("Emergency doesn't exist");
             }
 
             return await this.professionRepo.add({name, emergencyId: existingEmergency.id});
