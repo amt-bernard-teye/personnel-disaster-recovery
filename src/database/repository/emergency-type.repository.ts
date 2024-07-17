@@ -87,7 +87,7 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
     async findAll(page: number, wantAll: boolean = false): Promise<EmergencyType[]> {
         const prisma = this.open();
 
-        const rows = 1;
+        const rows = 9;
         let emergencyTypes: EmergencyType[] = [];
 
         if (wantAll) {
