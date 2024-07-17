@@ -84,13 +84,13 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         return profession;
     }
 
-    async findAll(page: number): Promise<Profession[]> {
+    async findAll(page: number = 0): Promise<Profession[]> {
         const prisma = this.open();
 
         const rows = 9;
 
         const professions = await prisma.profession.findMany({
-            skip: rows * page,
+            skip: page * rows,
             take: rows,
             select: this.selectProps()
         });

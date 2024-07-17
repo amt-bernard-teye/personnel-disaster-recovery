@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 
@@ -30,9 +30,15 @@ export class EmergencyTypeController {
     @UseInterceptors(DataOnlyInterceptor)
     @ApiResponse(swaggerInternalError)
     @ApiResponse(swaggerFetchEmergencySuccess)
-    async findAll(@Query("page") page: string) {
+    async findAll(@Query("page") page: string, @Query("want") want: string) {
         let parsedPage = pageParser(page);
-        return await this.emergencyTypeService.findAll(parsedPage);
+        let wantAll = false;
+
+        if (want === "all") {
+            wantAll = true;
+        }
+        
+        return await this.emergencyTypeService.findAll(parsedPage, wantAll);
     }
     
     @Post()
