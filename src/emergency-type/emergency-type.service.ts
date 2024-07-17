@@ -6,9 +6,8 @@ import { throwException } from 'src/shared/util/handle-bad-request.util';
 export class EmergencyTypeService {
     constructor(private emergencyTypeRepo: EmergencyTypeRepository) {}
 
-    async findAll(page: number, want: "rows" | "all") {
+    async findAll(page: number, wantAll: boolean) {
         try {
-            const wantAll = want === "all" ? true : false;
             const emergencies = await this.emergencyTypeRepo.findAll(page, wantAll);
             const rows = await this.emergencyTypeRepo.count();
 

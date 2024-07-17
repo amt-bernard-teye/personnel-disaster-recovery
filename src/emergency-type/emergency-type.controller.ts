@@ -32,13 +32,13 @@ export class EmergencyTypeController {
     @ApiResponse(swaggerFetchEmergencySuccess)
     async findAll(@Query("page") page: string, @Query("want") want: string) {
         let parsedPage = pageParser(page);
-        let selectedWant = <"all" | "rows">want;
+        let wantAll = false;
 
-        if (!selectedWant) {
-            throw new BadRequestException("Indicate whether you want 'rows' or 'all'");
+        if (want === "all") {
+            wantAll = true;
         }
         
-        return await this.emergencyTypeService.findAll(parsedPage, selectedWant);
+        return await this.emergencyTypeService.findAll(parsedPage, wantAll);
     }
     
     @Post()
