@@ -84,16 +84,24 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
         return emergencyType;
     }
 
-    async findAll(page: number): Promise<EmergencyType[]> {
+    async findAll(page: number, wantAll: boolean = false): Promise<EmergencyType[]> {
         const prisma = this.open();
 
-        const rows = 9;
+        const rows = 1;
+        let emergencyTypes: EmergencyType[] = [];
 
-        const emergencyTypes = await prisma.emergencyType.findMany({
-            skip: page * rows,
-            take: rows,
-            select: this.selectProps()
-        });
+        if (wantAll) {
+            emergencyTypes = await prisma.emergencyType.findMany({
+                select: this.selectProps()
+            });
+        }
+        else {
+            emergencyTypes = await prisma.emergencyType.findMany({
+                skip: page * rows,
+                take: rows,
+                select: this.selectProps()
+            });
+        }
 
         await this.close();
 
