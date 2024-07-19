@@ -38,6 +38,7 @@ enum Gender {
 
 model Personnel {
   id Int @id @default(autoincrement())
+  created_at DateTime @default(now())
   phoneNumber String
   houseNumber String
   gender Gender
@@ -46,11 +47,14 @@ model Personnel {
   digitalAddress String
   userId String @unique
   user User @relation(fields: [userId], references: [id])
+  professionId Int @map("profession_id")
+  profession Profession @relation(fields: [professionId], references: [id])
   status PersonnelStatus  @default(PENDING)
   availability AvailabilityStatus @default(AVAILABLE)
   personnelProfession PersonnelProfession?
   educationalBackground EducationalBackground?
   projects Project[]
+  emergencyInitiativePersonnel EmergencyIntiativePersonnel[]
 
   @@map("personnels")
 }
@@ -66,15 +70,6 @@ enum AvailabilityStatus {
   UNAVAILABLE
 }
 
-model EmergencyType {
-  id Int @id @default(autoincrement())
-  name String
-  status EmergencyTypeStatus @default(ACTIVE)
-  professions Profession[]
-
-  @@map("emergency_types")
-}
-
 enum EmergencyTypeStatus {
   ACTIVE
   REMOVED
@@ -82,11 +77,11 @@ enum EmergencyTypeStatus {
 
 model Profession {
   id Int @id @default(autoincrement())
+  created_at DateTime @default(now())
   name String
-  emergencyId Int
-  emergency EmergencyType @relation(fields: [emergencyId], references: [id])
-  personnnelProfession PersonnelProfession[]
   status AvailabilityStatus @default(AVAILABLE)
+  personnel Personnel[]
+  emergencyInitiativeProfession EmergencyIntiativeProfession[]
 
   @@map("professions")
 }
@@ -98,8 +93,6 @@ model PersonnelProfession {
   employer_email String
   personnelId Int @unique
   personnel Personnel @relation(fields: [personnelId], references: [id])
-  professionId Int
-  profession Profession @relation(fields: [professionId], references: [id])
   currrentPosition CurrentPosition
 
   @@map("personnnel_profession")
@@ -130,4 +123,69 @@ model Project {
   personnel Personnel @relation(fields: [personnelId], references: [id])
 
   @@map("projects")
+}
+
+model Manager {
+  id Int @id @default(autoincrement())
+  created_at DateTime @default(now())
+  name String
+  phoneNumber String @map("phone_number")
+  emergencyInitiatives EmergencyInitiative[]
+
+  @@map("managers")
+}
+
+model EmergencyType {
+  id Int @id @default(autoincrement())
+  created_at DateTime @default(now())
+  name String
+  status EmergencyTypeStatus @default(ACTIVE)
+  emergencyInitiatives EmergencyInitiative[]
+
+  @@map("emergency_types")
+}
+
+model EmergencyInitiative {
+  id Int @id @default(autoincrement())
+  created_at DateTime @default(now())
+  dispatched_date DateTime
+  location String
+  emergencyTypeId Int 
+  emergencyType EmergencyType @relation(fields: [emergencyTypeId], references: [id])
+  description String
+  managerId Int
+  manager Manager @relation(fields: [managerId], references: [id])
+  end_date DateTime
+  state State
+  emergencyInitiativeProfession EmergencyIntiativeProfession[]
+  emergencyInitiativePersonnel EmergencyIntiativePersonnel[]
+
+  @@map("emergency_initiatives")
+}
+
+enum State {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model EmergencyIntiativeProfession {
+  id Int @id @default(autoincrement())
+  professionId Int
+  profession Profession @relation(fields: [professionId], references: [id])
+  emergencyInitiativeId Int
+  emergencyInitiative EmergencyInitiative @relation(fields: [emergencyInitiativeId], references: [id])
+  number Int
+
+  @@map("emergency_profession")
+}
+
+model EmergencyIntiativePersonnel {
+  id Int @id @default(autoincrement())
+  emergencyInitiativeId Int
+  emergencyInitiative EmergencyInitiative @relation(fields: [emergencyInitiativeId], references: [id])
+  personnelId Int
+  personnel Personnel @relation(fields: [personnelId], references: [id])
+
+  @@map("emergency_initiative_personnel")
 }
