@@ -40,23 +40,3 @@ Projects worked on >= 10
 -- LOW
 Year of Experience below 5
 Projects worked on below 10
-
-
-------------------------------
-****** Database Design *******
-------------------------------
-- Personnel (id, dob, phone_number, house_address, gender, status[PENDING, APPROVED, DISAPPROVED], availability[AVAILABLE, UNAVAILABLE])
-- Personnel_Professional_Info (id, job title, current_position, years, employee id, employer_email, personnel_id)
-- Educational Background (id, qualification, field of study, personnel_id, year_of_grad)
-- Projects (id, project_title, description, personnel_id)
-- Emergency_Type (id, name, status[ACTIVE, REMOVED])
-- Profession (id, name, emergency_id)
-
-------- *** remaining tables to add *** ---------
-- Manager (id, date_added, name, phone)
-- Happened_Emergency (id, created_at, location, emergency_id, description, manager_id, phone_number)
-- Personnel_Happened_Emergency (id, happened_id, personnel_id)
-
-------- *** changes to implement *** -----------
-- add date_added to Emergency_Type
-- many to many relationship between profession and emergency
