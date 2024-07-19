@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 
 import { AuthGuard } from 'src/shared/guards/auth.guard';
@@ -17,6 +17,7 @@ import { changeImageValidator, imageUploadConfig } from './image-uploader.multer
 import { swaggerCheckEmailSuccess, swaggerCheckEmailValidationError } from 'src/auth/dto/check-email.swagger';
 import { ChangeEmailDto } from 'src/auth/dto/change-email.dto';
 import { swaggerChangeImageSuccess, swaggerChangeImageValidationError } from './swagger/change-image.swagger';
+import { ChangeImageDto } from './dto/change-image.dto';
 
 @Controller('users')
 @ApiBearerAuth()
@@ -57,7 +58,9 @@ export class UsersController {
 
     @Post("change-image")
     @UseInterceptors(FileInterceptor("image", imageUploadConfig))
+    @ApiConsumes("multipart/form-data")
     @UseInterceptors(MessageOnlyInterceptor)
+    @ApiBody({type: ChangeImageDto})
     @ApiResponse(swaggerChangeImageSuccess)
     @ApiResponse(swaggerChangeImageValidationError)
     async changeImage(

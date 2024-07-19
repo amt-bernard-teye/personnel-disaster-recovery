@@ -53,5 +53,10 @@ Projects worked on below 10
 - Profession (id, name, emergency_id)
 
 ------- *** remaining tables to add *** ---------
-- Happened_Emergency (id, created_at, location, emergency_id, description, manager name, phone_number)
-- Personnel_Happened_Emergency (id, happened_id, personnel_id) 
+- Manager (id, date_added, name, phone)
+- Happened_Emergency (id, created_at, location, emergency_id, description, manager_id, phone_number)
+- Personnel_Happened_Emergency (id, happened_id, personnel_id)
+
+------- *** changes to implement *** -----------
+- add date_added to Emergency_Type
+- many to many relationship between profession and emergency
