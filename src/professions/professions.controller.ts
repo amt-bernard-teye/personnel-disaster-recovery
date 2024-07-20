@@ -38,7 +38,7 @@ export class ProfessionsController {
     @ApiResponse(swaggerCreateProfessionSuccess)
     @ApiResponse(swaggerCreateProfessionValidationError)
     create(@Body(ValidationPipe) body: ProfessionDto) {
-        return this.professionsService.create(body.name, +body.emergencyId);
+        return this.professionsService.create(body.name);
     }
 
     @Put(":id")
@@ -49,8 +49,7 @@ export class ProfessionsController {
     @ApiResponse(swaggerUpdateProfessionValidationError)
     update(@Param("id", ParseIntPipe) id: string, @Body(ValidationPipe) body: ProfessionDto) {
         return this.professionsService.update(+id, {
-            name: body.name,
-            emergencyId: +body.emergencyId
+            name: body.name
         });
     }
 
