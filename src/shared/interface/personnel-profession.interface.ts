@@ -5,7 +5,7 @@ export type PersonnelProfession = {
     experienceYears: number;
     employerName: string;
     employeeEmail: string;
-    personnelId: number;
+    personnelId?: number;
     currentPosition: CurrentPosition;
 }
 

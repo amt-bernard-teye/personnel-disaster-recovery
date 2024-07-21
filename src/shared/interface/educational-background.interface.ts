@@ -1,12 +1,12 @@
-export type EducationBackground = {
+export type EducationalBackground = {
     id?: number;
     qualification: string;
     studyField: string;
-    personnelId: number;
+    personnelId?: number;
     graduationYear: number;
 }
 
-export type EducationBackgroundProp = {
+export type EducationalBackgroundProp = {
     qualification: boolean;
     studyField: boolean;
     personnelId: boolean;
