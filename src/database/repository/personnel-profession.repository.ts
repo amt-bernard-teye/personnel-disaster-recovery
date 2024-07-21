@@ -10,7 +10,6 @@ export class PersonnelProfessionRepository extends BaseRepository<PersonnelProfe
             employerName: true,
             experienceYears: true,
             personnelId: true,
-            professionId: true
         };
     }
 
@@ -24,8 +23,7 @@ export class PersonnelProfessionRepository extends BaseRepository<PersonnelProfe
                 employer_email: entity.employeeEmail,
                 employer_name: entity.employerName,
                 experienceYears: entity.experienceYears,
-                personnelId: entity.personnelId,
-                professionId: entity.professionId
+                personnelId: entity.personnelId
             },
             select: this.selectProps()
         });
@@ -47,8 +45,7 @@ export class PersonnelProfessionRepository extends BaseRepository<PersonnelProfe
                 employer_email: entity.employeeEmail,
                 employer_name: entity.employerName,
                 experienceYears: entity.experienceYears,
-                personnelId: entity.personnelId,
-                professionId: entity.professionId
+                personnelId: entity.personnelId
             },
             select: this.selectProps()
         });

@@ -6,7 +6,6 @@ export type PersonnelProfession = {
     employerName: string;
     employeeEmail: string;
     personnelId: number;
-    professionId: number;
     currentPosition: CurrentPosition;
 }
 
@@ -16,6 +15,5 @@ export type PersonnelProfessionProp = {
     employerName: boolean;
     employeeEmail: boolean;
     personnelId: boolean;
-    professionId: boolean;
     currentPosition: boolean;
 }
