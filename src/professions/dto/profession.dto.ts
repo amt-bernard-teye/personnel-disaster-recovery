@@ -6,9 +6,4 @@ export class ProfessionDto {
     @ApiProperty()
     @Matches(/^[a-zA-Z ]*$/)
     name: string;
-
-    @IsNotEmpty()
-    @IsNumber()
-    @ApiProperty()
-    emergencyId: string;
 }

@@ -1,4 +1,6 @@
 import { AvailabilityStatus, Gender, PersonnelStatus } from "@prisma/client";
+import { EducationalBackground } from "./educational-background.interface";
+import { PersonnelProfession } from "./personnel-profession.interface";
 
 export type Personnel = {
     id?: number;
@@ -9,9 +11,11 @@ export type Personnel = {
     town: string;
     digitalAddress: string;
     userId: string;
-    image: string;
     status?: PersonnelStatus;
     availability?: AvailabilityStatus;
+    professionId?: number;
+    educationalBackground?: EducationalBackground,
+    personnelProfession?: PersonnelProfession
 }
 
 export type PersonnelProp = {
@@ -23,7 +27,6 @@ export type PersonnelProp = {
     town: boolean;
     digitalAddress: boolean;
     userId: boolean;
-    image: boolean;
     status: boolean;
     availability: boolean;
 }

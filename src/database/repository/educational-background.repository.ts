@@ -1,8 +1,8 @@
-import { EducationBackground, EducationBackgroundProp } from "src/shared/interface/educational-background.interface";
+import { EducationalBackground, EducationalBackgroundProp } from "src/shared/interface/educational-background.interface";
 import { BaseRepository } from "./base.repository";
 
-export class EducationalBackgroundRespository extends BaseRepository<EducationBackground, EducationBackgroundProp> {
-    selectProps(): EducationBackgroundProp {
+export class EducationalBackgroundRespository extends BaseRepository<EducationalBackground, EducationalBackgroundProp> {
+    selectProps(): EducationalBackgroundProp {
         return {
             personnelId: true,
             qualification: true,
@@ -11,7 +11,7 @@ export class EducationalBackgroundRespository extends BaseRepository<EducationBa
         };
     }
 
-    async add(entity: EducationBackground): Promise<EducationBackground> {
+    async add(entity: EducationalBackground): Promise<EducationalBackground> {
         const prisma = this.open();
 
         const addedEducationBackground = await prisma.educationalBackground.create({
@@ -29,7 +29,7 @@ export class EducationalBackgroundRespository extends BaseRepository<EducationBa
         return addedEducationBackground;
     }
 
-    async update(entity: EducationBackground): Promise<EducationBackground> {
+    async update(entity: EducationalBackground): Promise<EducationalBackground> {
         const prisma = this.open();
 
         const updatedEducationBackground = await prisma.educationalBackground.update({
