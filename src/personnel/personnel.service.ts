@@ -18,10 +18,21 @@ export class PersonnelService {
 
   async findAll(page: number, wantAll: boolean) {
     try {
-      const personnel = await this.personnelRepo.findAll(page, wantAll);
+      const personnels = await this.personnelRepo.findAll(page, wantAll);
+      const formattedPersonnels = personnels.map(pers => {
+        return {
+          id: pers.id,
+          name: pers.name,
+          email: pers.email,
+          image: pers.image,
+          profession: pers['personnel']['profession']['name'],
+          status: pers['personnel']['status'],
+          createdAt: pers['personnel']['created_at']
+        }
+      });
       const count = await this.personnelRepo.count();
 
-      return {count, personnel};
+      return {count, personnel: formattedPersonnels};
     }
     catch(error) {
       throwException(error);
@@ -46,5 +57,9 @@ export class PersonnelService {
     catch(error) {
       throwException(error);
     }
+  }
+
+  async delete(id: string) {
+
   }
 }
