@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AvailabilityStatus } from '@prisma/client';
 
-import { EmergencyTypeRepository } from 'src/database/repository/emergency-type.repository';
 import { ProfessionRespository } from 'src/database/repository/profession.repository';
 import { Profession } from 'src/shared/interface/profession.interface';
 import { throwException } from 'src/shared/util/handle-bad-request.util';
@@ -10,7 +9,6 @@ import { throwException } from 'src/shared/util/handle-bad-request.util';
 export class ProfessionsService {
     constructor(
         private professionRepo: ProfessionRespository,
-        private emergencyTypeRepo: EmergencyTypeRepository
     ) { }
 
     async findAll(page: number) {
@@ -27,7 +25,11 @@ export class ProfessionsService {
 
     async create(name: string) {
         try {
-            // ensure no duplicate values are entered
+            const existingProfession = await this.professionRepo.find(name);
+
+            if (existingProfession) {
+                throw new BadRequestException("Profession already exist");
+            }
 
             return await this.professionRepo.add({name});
         }
