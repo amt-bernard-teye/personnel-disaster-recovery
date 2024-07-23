@@ -60,6 +60,19 @@ export class PersonnelService {
   }
 
   async delete(id: string) {
+    try {
+      const existingUser = await this.userRepo.find(id);
 
+      if (!existingUser) {
+        throw new BadRequestException("Personnel doesn't exist");
+      }
+
+      await this.userRepo.delete(id);
+
+      return "Personnel deleted successfully";
+    }
+    catch(error) {
+      throwException(error);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { PersonnelStatus, Role } from "@prisma/client";
+import { AccountStatus, PersonnelStatus, Role } from "@prisma/client";
 import { BaseRepository } from "./base.repository";
 import { Personnel, PersonnelProp } from "src/shared/interface/personnel.interface";
 import { ISingleFinder } from "../interface/single-finder.interface";
@@ -120,6 +120,7 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
         const personnels = await prisma.user.findMany({
             where: {
                 role: Role.PERSONNEL,
+                accountStatus: AccountStatus.VERIFIED,
                 personnel: {
                     isNot: null
                 }
@@ -141,8 +142,6 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
                 }
             }
         });
-
-        console.log(personnels);
 
         await this.close();
 
