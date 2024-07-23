@@ -78,7 +78,7 @@ export class UsersService {
             user.image = imagePath;
             await this.userRepo.update(user);
 
-            return "Image uploaded";
+            return { imagePath };
         }
         catch(error) {
             throw new InternalServerErrorException("Something went wrong, please try again");

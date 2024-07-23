@@ -6,7 +6,8 @@ export const swaggerChangeImageSuccess = {
             schema: {
                 type: "object",
                 example: {
-                    message: "Image uploaded"
+                    message: "Image uploaded",
+                    imagePath: "https://disaster-recovery-s3-1.s3.us-east-1.amazonaws.com/image1721569948773"
                 }
             }
         }
