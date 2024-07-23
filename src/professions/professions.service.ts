@@ -25,15 +25,11 @@ export class ProfessionsService {
         }
     }
 
-    async create(name: string, emergencyId: number) {
+    async create(name: string) {
         try {
-            const existingEmergency = await this.emergencyTypeRepo.find(emergencyId);
-            
-            if (!existingEmergency) {
-                throw new BadRequestException("Emergency doesn't exist");
-            }
+            // ensure no duplicate values are entered
 
-            return await this.professionRepo.add({name, emergencyId: existingEmergency.id});
+            return await this.professionRepo.add({name});
         }
         catch(error) {
             throwException(error);
@@ -43,17 +39,11 @@ export class ProfessionsService {
     async update(id: number, profession: Profession) {
         try {
             const existingProfession = await this.professionRepo.find(id);
-            const existingEmergency = await this.emergencyTypeRepo.find(profession.emergencyId);
             
             if (!existingProfession) {
                 throw new BadRequestException("Profession doesn't exist");
             }
 
-            if (!existingEmergency) {
-                throw new BadRequestException("Emergency doesn't exist");
-            }
-
-            existingProfession.emergencyId = profession.emergencyId,
             existingProfession.name = profession.name;
 
             return await this.professionRepo.update(existingProfession);

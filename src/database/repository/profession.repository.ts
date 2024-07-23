@@ -14,7 +14,6 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         return {
             id: true,
             name: true,
-            emergencyId: true,
             status: true
         }
     }
@@ -25,7 +24,6 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         const addedProfession = await prisma.profession.create({
             data: {
                 name: entity.name,
-                emergencyId: entity.emergencyId
             },
             select: this.selectProps()
         });
@@ -44,7 +42,6 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
             },
             data: {
                 name: entity.name,
-                emergencyId: entity.emergencyId,
                 status: entity.status
             }
         });

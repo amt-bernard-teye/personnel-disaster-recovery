@@ -2,9 +2,10 @@ import { PersonnelStatus } from "@prisma/client";
 import { BaseRepository } from "./base.repository";
 import { Personnel, PersonnelProp } from "src/shared/interface/personnel.interface";
 import { ISingleFinder } from "../interface/single-finder.interface";
+import { IMultipleFinder } from "../interface/multiple-finder.interface";
 
 export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp>
-    implements ISingleFinder<number, Personnel> {
+    implements ISingleFinder<number, Personnel>, IMultipleFinder<Personnel> {
     selectProps(): PersonnelProp {
         return {
             id: true,
@@ -13,11 +14,10 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
             dob: true,
             gender: true,
             houseNumber: true,
-            image: true,
             phoneNumber: true,
             status: true,
             town: true,
-            userId: true
+            userId: true,
         };
     }
 
@@ -25,7 +25,25 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
         const prisma = this.open();
 
         const addedPersonnel = await prisma.personnel.create({
-            data: this.getData(entity),
+            data: {
+                ...this.getData(entity),
+                educationalBackground: {
+                    create: {
+                        graduationYear: entity.educationalBackground.graduationYear,
+                        qualification: entity.educationalBackground.qualification,
+                        studyField: entity.educationalBackground.studyField
+                    }
+                },
+                personnelProfession: {
+                    create: {
+                        currrentPosition: entity.personnelProfession.currentPosition,
+                        employee_id: entity.personnelProfession.employeeId,
+                        employer_email: entity.personnelProfession.employeeEmail,
+                        employer_name: entity.personnelProfession.employerName,
+                        experienceYears: entity.personnelProfession.experienceYears
+                    }
+                }
+            },
             select: this.selectProps()
         });
 
@@ -36,14 +54,14 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
 
     private getData(entity: Personnel) {
         return {
-            phoneNumber: entity.phoneNumber,
             digitalAddress: entity.digitalAddress,
-            dob: entity.dob,
             gender: entity.gender,
+            dob: entity.dob,
             houseNumber: entity.houseNumber,
-            image: entity.image,
+            phoneNumber: entity.phoneNumber,
             town: entity.town,
-            userId: entity.userId
+            userId: entity.userId,
+            professionId: entity.professionId
         };
     }
 
@@ -91,5 +109,37 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
         await this.close();
 
         return personnel;
+    }
+
+    async findAll(page: number, wantAll: boolean): Promise<Personnel[]> {
+        const prisma = this.open();
+        const rows = 9;
+        let personnels: Personnel[] = [];
+
+        if (wantAll) {
+            personnels = await prisma.personnel.findMany({
+                select: this.selectProps()
+            });
+        }
+        else {
+            personnels = await prisma.personnel.findMany({
+                skip: rows * page,
+                take: rows,
+                select: this.selectProps()
+            });
+        }
+
+        await this.close();
+        return personnels;
+    }
+
+    async count(): Promise<number> {
+        const prisma = this.open();
+        
+        const rows = await prisma.personnel.count();
+
+        await this.close();
+
+        return rows;
     }
 }
