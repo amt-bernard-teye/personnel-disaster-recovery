@@ -106,7 +106,7 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
             skip: page * rows,
             take: rows,
             where: {
-                status: AvailabilityStatus.UNAVAILABLE
+                status: AvailabilityStatus.AVAILABLE
             },
             select: this.selectProps()
         });

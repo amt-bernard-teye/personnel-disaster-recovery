@@ -7,14 +7,26 @@ export const swaggerFetchProfessionSuccess = {
                 type: "object",
                 example: {
                     data: {
-                        count: 1,
+                        count: 3,
                         professions: [
                             {
                                 "id": 1,
-                                "name": "Doctor",
-                                "emergencyId": 2,
-                                "status": "AVAILABLE"
-                            }
+                                "name": "Another Testing",
+                                "status": "AVAILABLE",
+                                "created_at": "2024-07-19T04:44:02.473Z"
+                            },
+                            {
+                                "id": 2,
+                                "name": "Fire Fighter",
+                                "status": "AVAILABLE",
+                                "created_at": "2024-07-19T04:44:02.473Z"
+                            },
+                            {
+                                "id": 3,
+                                "name": "Soldier",
+                                "status": "AVAILABLE",
+                                "created_at": "2024-07-19T04:44:02.473Z"
+                            },
                         ]
                     }
                 }

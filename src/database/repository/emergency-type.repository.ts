@@ -15,7 +15,8 @@ export class EmergencyTypeRepository extends BaseRepository<EmergencyType, Emerg
         return {
             id: true,
             name: true,
-            status: true
+            status: true,
+            created_at: true
         };
     }
 
