@@ -1,20 +1,20 @@
 import { Injectable } from "@nestjs/common";
 
-import { AvailabilityStatus } from "@prisma/client";
 import { Profession, ProfessionProp } from "src/shared/interface/profession.interface";
 import { BaseRepository } from "./base.repository";
 import { ISingleFinder } from "../interface/single-finder.interface";
-import { IMultipleFinder } from "../interface/multiple-finder.interface";
+import { AvailabilityStatus } from "@prisma/client";
 import { IDeleteEntity } from "../interface/delete-entity.interface";
 
 @Injectable()
 export class ProfessionRespository extends BaseRepository<Profession, ProfessionProp>
-    implements ISingleFinder<number, Profession>, IMultipleFinder<Profession>, IDeleteEntity {
+    implements ISingleFinder<number, Profession>, IDeleteEntity {
     selectProps(): ProfessionProp {
         return {
             id: true,
             name: true,
-            status: true
+            status: true,
+            created_at: true
         }
     }
 
@@ -43,27 +43,13 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
             data: {
                 name: entity.name,
                 status: entity.status
-            }
+            },
+            select: this.selectProps()
         });
 
         await this.close();
 
         return updatedProfession;
-    }
-
-    async delete(id: number): Promise<void> {
-        const prisma = this.open();
-
-        await prisma.profession.update({
-            where: {
-                id: id
-            },
-            data: {
-                status: AvailabilityStatus.UNAVAILABLE
-            }
-        });
-
-        await this.close();
     }
 
     async find(entityId: number): Promise<Profession> {
@@ -81,6 +67,21 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         return profession;
     }
 
+    async delete(id: number): Promise<void> {
+        const prisma = this.open();
+
+        await prisma.profession.update({
+            where: {
+                id: id
+            },
+            data: {
+                status: AvailabilityStatus.UNAVAILABLE
+            }
+        });
+
+        await this.close();
+    }
+
     async findAll(page: number = 0): Promise<Profession[]> {
         const prisma = this.open();
 
@@ -89,35 +90,14 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         const professions = await prisma.profession.findMany({
             skip: page * rows,
             take: rows,
+            where: {
+                status: AvailabilityStatus.UNAVAILABLE
+            },
             select: this.selectProps()
         });
 
         await this.close();
 
         return professions;
-    }
-
-    async findOnlyAvailable(): Promise<Profession[]> {
-        const prisma = this.open();
-
-        const professions = await prisma.profession.findMany({
-            where: {
-                status: AvailabilityStatus.AVAILABLE
-            }
-        });
-
-        await this.close();
-
-        return professions;
-    }
-
-    async count(): Promise<number> {
-        const prisma = this.open();
-
-        const rows = await prisma.profession.count();
-
-        await this.close();
-
-        return rows;
     }
 }
