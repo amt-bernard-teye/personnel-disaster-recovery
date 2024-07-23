@@ -11,10 +11,10 @@ export class ProfessionsService {
         private professionRepo: ProfessionRespository,
     ) { }
 
-    async findAll(page: number) {
+    async findAll(page: number, wantAll: boolean) {
         try {
             const count = await this.professionRepo.count();
-            const professions = await this.professionRepo.findAll(page);
+            const professions = await this.professionRepo.findAll(page, wantAll);
 
             return { count, professions };
         }

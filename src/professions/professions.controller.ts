@@ -26,9 +26,16 @@ export class ProfessionsController {
     @UseInterceptors(DataOnlyInterceptor)
     @ApiResponse(swaggerInternalError)
     @ApiResponse(swaggerFetchProfessionSuccess)
-    find(@Query("page") page: string) {
+    find(@Query("page") page: string, @Query("want") want: string) {
         const parsedPage = pageParser(page);
-        return this.professionsService.findAll(parsedPage);
+
+        let wantAll = false;
+
+        if (want === "all") {
+            wantAll = true;
+        }
+
+        return this.professionsService.findAll(parsedPage, wantAll);
     }
 
     @Post()

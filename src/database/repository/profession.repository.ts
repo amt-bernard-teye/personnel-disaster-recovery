@@ -97,19 +97,30 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         await this.close();
     }
 
-    async findAll(page: number = 0): Promise<Profession[]> {
+    async findAll(page: number = 0, wantAll: boolean = false): Promise<Profession[]> {
         const prisma = this.open();
 
         const rows = 9;
+        let professions: Profession[] = [];
 
-        const professions = await prisma.profession.findMany({
-            skip: page * rows,
-            take: rows,
-            where: {
-                status: AvailabilityStatus.AVAILABLE
-            },
-            select: this.selectProps()
-        });
+        if (wantAll) {
+            professions = await prisma.profession.findMany({
+                where: {
+                    status: AvailabilityStatus.AVAILABLE
+                },
+                select: this.selectProps()
+            });
+        }
+        else {
+            professions = await prisma.profession.findMany({
+                skip: page * rows,
+                take: rows,
+                where: {
+                    status: AvailabilityStatus.AVAILABLE
+                },
+                select: this.selectProps()
+            });
+        }
 
         await this.close();
 
