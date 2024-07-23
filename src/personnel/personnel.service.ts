@@ -48,11 +48,13 @@ export class PersonnelService {
         throw new BadRequestException("Profession doesn't exist or your account isn't recognized");
       }
 
-      return await this.personnelRepo.add({
+      await this.personnelRepo.add({
         ...personnel,
         educationalBackground: educationalBackground,
         personnelProfession: persProfession
       });
+
+      return "Saved successfully";
     }
     catch(error) {
       throwException(error);

@@ -2,8 +2,6 @@ import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards, UseI
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreatePersonnel } from './dto/create-personnel.dto';
 import { PersonnelService } from './personnel.service';
-import { DataMessageInterceptor } from 'src/shared/interceptors/data-message.interceptor';
-import { ResponseMessage } from 'src/shared/decorators/response-message.decorator';
 import { Personnel } from 'src/shared/interface/personnel.interface';
 import { CurrentPosition, Gender, Role } from '@prisma/client';
 import { EducationalBackground } from 'src/shared/interface/educational-background.interface';
@@ -15,6 +13,7 @@ import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.int
 import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger';
 import { swaggerDeletePersonnelSuccess, swaggerDeletePersonnelValidationError } from './swagger/delete-personnel.swagger';
 import { swaggerFetchPersonnelnSuccess } from './swagger/fetch-personnel.swagger';
+import { swaggerCreatePersonnelSuccess, swaggerCreatePersonnelValidationError } from './swagger/create-personnel.swagger';
 
 @Controller('personnels')
 @ApiTags("Personnel")
@@ -42,8 +41,10 @@ export class PersonnelController {
   
   @Post()
   @Roles([Role.PERSONNEL])
-  @UseInterceptors(DataMessageInterceptor)
-  @ResponseMessage("Successfully saved")
+  @UseInterceptors(MessageOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerCreatePersonnelSuccess)
+  @ApiResponse(swaggerCreatePersonnelValidationError)
   create(@Req() request: Request, @Body(ValidationPipe) body: CreatePersonnel) {
     const personnel: Personnel = {
       digitalAddress: body.digitalAddress,
