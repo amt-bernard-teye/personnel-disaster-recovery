@@ -1,11 +1,12 @@
-import { PersonnelStatus } from "@prisma/client";
+import { PersonnelStatus, Role } from "@prisma/client";
 import { BaseRepository } from "./base.repository";
 import { Personnel, PersonnelProp } from "src/shared/interface/personnel.interface";
 import { ISingleFinder } from "../interface/single-finder.interface";
 import { IMultipleFinder } from "../interface/multiple-finder.interface";
+import { User } from "src/shared/interface/user.interface";
 
 export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp>
-    implements ISingleFinder<number, Personnel>, IMultipleFinder<Personnel> {
+    implements ISingleFinder<number, Personnel>, IMultipleFinder<User> {
     selectProps(): PersonnelProp {
         return {
             id: true,
@@ -111,32 +112,64 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
         return personnel;
     }
 
-    async findAll(page: number, wantAll: boolean): Promise<Personnel[]> {
+    async findAll(page: number, wantAll: boolean = false): Promise<User[]> {
         const prisma = this.open();
-        const rows = 9;
-        let personnels: Personnel[] = [];
 
-        if (wantAll) {
-            personnels = await prisma.personnel.findMany({
-                select: this.selectProps()
-            });
-        }
-        else {
-            personnels = await prisma.personnel.findMany({
-                skip: rows * page,
-                take: rows,
-                select: this.selectProps()
-            });
-        }
+        const rows = 9;
+        const result = this.fetchAllProps();
+        const personnels = await prisma.user.findMany({
+            where: {
+                role: Role.PERSONNEL,
+                personnel: {
+                    isNot: null
+                }
+            },
+            skip: rows * page,
+            take: rows,
+            select: {
+                ...result,
+                personnel: {
+                    select: {
+                        status: true,
+                        created_at: true,
+                        profession: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        console.log(personnels);
 
         await this.close();
+
         return personnels;
+    }
+
+    fetchAllProps() {
+        return {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            role: true
+        };
     }
 
     async count(): Promise<number> {
         const prisma = this.open();
-        
-        const rows = await prisma.personnel.count();
+
+        const rows = await prisma.user.count({
+            where: {
+                role: Role.PERSONNEL,
+                personnel: {
+                    isNot: null
+                }
+            },
+        });
 
         await this.close();
 

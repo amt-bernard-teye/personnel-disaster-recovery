@@ -5,10 +5,11 @@ import { BaseRepository } from "./base.repository";
 import { ISingleFinder } from "../interface/single-finder.interface";
 import { AvailabilityStatus } from "@prisma/client";
 import { IDeleteEntity } from "../interface/delete-entity.interface";
+import { IMultipleFinder } from "../interface/multiple-finder.interface";
 
 @Injectable()
 export class ProfessionRespository extends BaseRepository<Profession, ProfessionProp>
-    implements ISingleFinder<number, Profession>, IDeleteEntity {
+    implements ISingleFinder<number, Profession>, IDeleteEntity, IMultipleFinder<Profession> {
     selectProps(): ProfessionProp {
         return {
             id: true,
@@ -52,15 +53,29 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         return updatedProfession;
     }
 
-    async find(entityId: number): Promise<Profession> {
+    async find(value: number | string): Promise<Profession> {
         const prisma = this.open();
+        let profession: Profession | null = null;
 
-        const profession = await prisma.profession.findFirst({
-            where: {
-                id: entityId
-            },
-            select: this.selectProps()
-        });
+        if (typeof value === "number") {
+            profession = await prisma.profession.findFirst({
+                where: {
+                    id: value
+                },
+                select: this.selectProps()
+            });
+        }
+        else {
+            profession = await prisma.profession.findFirst({
+                where: {
+                    name: {
+                        contains: value,
+                        mode: "insensitive"
+                    }
+                },
+                select: this.selectProps()
+            });
+        }
 
         await this.close();
 
@@ -99,5 +114,19 @@ export class ProfessionRespository extends BaseRepository<Profession, Profession
         await this.close();
 
         return professions;
+    }
+
+    async count(): Promise<number> {
+        const prisma = this.open();
+
+        const rows = await prisma.profession.count({
+            where: {
+                status: AvailabilityStatus.AVAILABLE
+            }
+        });
+
+        await this.close();
+
+        return rows;
     }
 }

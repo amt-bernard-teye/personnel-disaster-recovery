@@ -7,7 +7,7 @@ export type User = {
     password?: string;
     image?: string;
     role: Role;
-    accountStatus: AccountStatus;
+    accountStatus?: AccountStatus;
 }
 
 export type UserProp = {
