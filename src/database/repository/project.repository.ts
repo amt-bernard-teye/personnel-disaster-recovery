@@ -14,7 +14,6 @@ export class ProjectRepository extends BaseRepository<Project, ProjectProp>
       id: true,
       created_at: true,
       description: true,
-      personnelId: true,
       title: true,
     }
   }
