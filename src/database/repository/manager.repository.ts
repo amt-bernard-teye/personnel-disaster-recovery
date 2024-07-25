@@ -9,7 +9,7 @@ import { IMultipleFinder } from "../interface/multiple-finder.interface";
 
 @Injectable()
 export default class ManagerRepository extends BaseRepository<Manager, ManagerProp>
-  implements IDeleteEntity, ISingleFinder<number, Manager>, IMultipleFinder<Manager> {
+  implements IDeleteEntity, ISingleFinder<number | string, Manager>, IMultipleFinder<Manager> {
   selectProps(): ManagerProp {
     return {
       id: true,
@@ -77,15 +77,27 @@ export default class ManagerRepository extends BaseRepository<Manager, ManagerPr
     await this.close();
   }
 
-  async find(entityId: number): Promise<Manager> {
+  async find(value: number | string): Promise<Manager> {
     const prisma = this.open();
+    
+    let manager: Manager | null = null; 
 
-    const manager = await prisma.manager.findFirst({
-      where: {
-        id: entityId,
-      },
-      select: this.selectProps()
-    });
+    if (typeof value === "string") {
+      manager = await prisma.manager.findFirst({
+        where: {
+          email: value,
+        },
+        select: this.selectProps()
+      });
+    }
+    else {
+      manager = await prisma.manager.findFirst({
+        where: {
+          id: value,
+        },
+        select: this.selectProps()
+      });
+    }
 
     await this.close();
 
