@@ -5,6 +5,7 @@ import { PersonnelRepository } from './repository/personnel.repository';
 import { EmergencyTypeRepository } from './repository/emergency-type.repository';
 import { ProfessionRespository } from './repository/profession.repository';
 import { ProjectRepository } from './repository/project.repository';
+import ManagerRepository from './repository/manager.repository';
 
 @Global()
 @Module({
@@ -13,14 +14,16 @@ import { ProjectRepository } from './repository/project.repository';
         PersonnelRepository,
         EmergencyTypeRepository,
         ProfessionRespository,
-        ProjectRepository
+        ProjectRepository,
+        ManagerRepository
     ],
     exports: [
         UserRepository,
         PersonnelRepository,
         EmergencyTypeRepository,
         ProfessionRespository,
-        ProjectRepository
+        ProjectRepository,
+        ManagerRepository
     ]
 })
 export class DatabaseModule {}
