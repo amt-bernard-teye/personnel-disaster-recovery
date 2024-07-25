@@ -134,6 +134,7 @@ model Manager {
   image String
   email String @unique
   emergencyInitiatives EmergencyInitiative[]
+  status AvailabilityStatus @default(AVAILABLE)
 
   @@map("managers")
 }
