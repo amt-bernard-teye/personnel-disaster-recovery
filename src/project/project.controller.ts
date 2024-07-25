@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { Roles } from 'src/shared/decorators/roles.decorator';
@@ -14,6 +14,8 @@ import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger'
 import { swaggerFetchProjectSuccess } from './swagger/fetch-project.swagger';
 import { swaggerCreateProjectSuccess, swaggerCreateProjectValidationError } from './swagger/create-project.swagger';
 import { swaggerUpdateProjectSuccess, swaggerUpdateProjectValidationError } from './swagger/update-project.swagger';
+import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
+import { swaggerDeleteProjectSuccess, swaggerDeleteProjectValidationError } from './swagger/delete-project.swagger';
 
 @Controller('projects')
 @UseGuards(AuthGuard)
@@ -62,7 +64,7 @@ export class ProjectController {
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerUpdateProjectSuccess)
   @ApiResponse(swaggerUpdateProjectValidationError)
-  update(@Param("id") id: string, @Body(ValidationPipe) body: ProjectDto, @Req() req: Request) {
+  update(@Param("id", ParseIntPipe) id: string, @Body(ValidationPipe) body: ProjectDto, @Req() req: Request) {
     const user = req['user'];
 
     return this.projectService.update({
@@ -72,5 +74,16 @@ export class ProjectController {
       },
       user
     );
+  }
+
+  @Delete(":id")
+  @UseInterceptors(MessageOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerDeleteProjectSuccess)
+  @ApiResponse(swaggerDeleteProjectValidationError)
+  delete(@Param("id", ParseIntPipe) id: string, @Req() req: Request) {
+    const user = req['user'];
+    
+    return this.projectService.delete(+id, user);
   }
 }

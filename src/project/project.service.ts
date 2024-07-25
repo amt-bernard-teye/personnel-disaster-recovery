@@ -5,6 +5,8 @@ import { ProjectRepository } from 'src/database/repository/project.repository';
 import { User } from 'src/shared/interface/user.interface';
 import { throwException } from 'src/shared/util/handle-bad-request.util';
 import { ProjectUpdateDetails } from './project-update-details.interface';
+import { Personnel } from 'src/shared/interface/personnel.interface';
+import { Project } from 'src/shared/interface/project.interface';
 
 @Injectable()
 export class ProjectService {
@@ -46,9 +48,7 @@ export class ProjectService {
       const existingPersonnel = await this.personnelRepo.findByUserId(user.id);
       const existingProject = await this.projectRepo.find(details.id);
 
-      if (existingPersonnel.id !== existingProject.personnelId) {
-        throw new BadRequestException("Access denied");
-      }
+      this.checkIfUserOwnsProject(existingPersonnel, existingProject);
 
       existingProject.title = details.title,
       existingProject.description = details.description;
@@ -56,6 +56,32 @@ export class ProjectService {
       const updatedProject = await this.projectRepo.update(existingProject);
 
       return updatedProject;
+    }
+    catch(error) {
+      throwException(error);
+    }
+  }
+
+  checkIfUserOwnsProject(existingPersonnel: Personnel, existingProject: Project) {
+    if (existingPersonnel.id !== existingProject.personnelId) {
+      throw new BadRequestException("Access denied");
+    }
+  }
+
+  async delete(id: number, user: User) {
+    try {
+      const existingPersonnel = await this.personnelRepo.findByUserId(user.id);
+      const existingProject = await this.projectRepo.find(id);
+
+      if (!existingProject) {
+        throw new BadRequestException("Project doesn't exist");
+      }
+
+      this.checkIfUserOwnsProject(existingPersonnel, existingProject)
+
+      await this.projectRepo.delete(id);
+
+      return "Project deleted successfully";
     }
     catch(error) {
       throwException(error);
