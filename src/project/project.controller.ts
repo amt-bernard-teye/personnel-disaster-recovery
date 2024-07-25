@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { Roles } from 'src/shared/decorators/roles.decorator';
@@ -13,6 +13,7 @@ import { ResponseMessage } from 'src/shared/decorators/response-message.decorato
 import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger';
 import { swaggerFetchProjectSuccess } from './swagger/fetch-project.swagger';
 import { swaggerCreateProjectSuccess, swaggerCreateProjectValidationError } from './swagger/create-project.swagger';
+import { swaggerUpdateProjectSuccess, swaggerUpdateProjectValidationError } from './swagger/update-project.swagger';
 
 @Controller('projects')
 @UseGuards(AuthGuard)
@@ -45,7 +46,7 @@ export class ProjectController {
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerCreateProjectSuccess)
   @ApiResponse(swaggerCreateProjectValidationError)
-  create(@Body(ValidationPipe) body: ProjectDto, @Req() req: Request, ) {
+  create(@Body(ValidationPipe) body: ProjectDto, @Req() req: Request) {
     const user = req['user'];
 
     return this.projectService.create(
@@ -55,5 +56,21 @@ export class ProjectController {
     );
   }
 
+  @Put(":id")
+  @UseInterceptors(DataMessageInterceptor)
+  @ResponseMessage("Project updated successfully")
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerUpdateProjectSuccess)
+  @ApiResponse(swaggerUpdateProjectValidationError)
+  update(@Param("id") id: string, @Body(ValidationPipe) body: ProjectDto, @Req() req: Request) {
+    const user = req['user'];
 
+    return this.projectService.update({
+        id: +id,
+        title: body.title,
+        description: body.description
+      },
+      user
+    );
+  }
 }

@@ -131,6 +131,8 @@ model Manager {
   created_at DateTime @default(now())
   name String
   phoneNumber String @map("phone_number")
+  image String
+  email String @unique
   emergencyInitiatives EmergencyInitiative[]
 
   @@map("managers")
