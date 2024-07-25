@@ -16,10 +16,12 @@ import { swaggerCreateProjectSuccess, swaggerCreateProjectValidationError } from
 import { swaggerUpdateProjectSuccess, swaggerUpdateProjectValidationError } from './swagger/update-project.swagger';
 import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
 import { swaggerDeleteProjectSuccess, swaggerDeleteProjectValidationError } from './swagger/delete-project.swagger';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 
 @Controller('projects')
-@UseGuards(AuthGuard)
+@UseGuards(RolesGuard)
 @Roles([Role.PERSONNEL])
+@UseGuards(AuthGuard)
 @ApiBearerAuth()
 @ApiTags("Projects")
 export class ProjectController {
