@@ -1,5 +1,5 @@
-import { Controller, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 
 import { ManagerService } from './manager.service';
@@ -8,6 +8,15 @@ import { Roles } from 'src/shared/decorators/roles.decorator';
 import { pageParser } from 'src/shared/util/page-parser.util';
 import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.interceptor';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
+import { DataMessageInterceptor } from 'src/shared/interceptors/data-message.interceptor';
+import { CreateManagerDto } from './dto/create-manager.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { changeImageValidator, imageUploadConfig } from 'src/users/image-uploader.multer';
+import { ManagerDto } from './dto/manager.dto';
+import { ResponseMessage } from 'src/shared/decorators/response-message.decorator';
+import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger';
+import { swaggerCreateManagerSuccess, swaggerCreateManagerValidationError } from './swagger/create-manager.swagger';
+import { swaggerFetchManagerSuccess } from './swagger/fetch-manager.swagger';
 
 @Controller('managers')
 @UseGuards(RolesGuard)
@@ -22,6 +31,8 @@ export class ManagerController {
 
   @Get()
   @UseInterceptors(DataOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerFetchManagerSuccess)
   findAll(@Query("page") page: string, @Query("want") want: string) {
     let parsedPage = pageParser(page);
     let wantAll = false;
@@ -32,4 +43,26 @@ export class ManagerController {
 
     return this.managerService.findAll(parsedPage, wantAll);
   }
+
+  @Post()
+  @UseInterceptors(DataMessageInterceptor)
+  @ResponseMessage("Manager added successfully")
+  @UseInterceptors(FileInterceptor("image", imageUploadConfig))
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({type: ManagerDto})
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerCreateManagerSuccess)
+  @ApiResponse(swaggerCreateManagerValidationError)
+  create(
+    @UploadedFile(changeImageValidator) file: Express.Multer.File,
+    @Body(ValidationPipe) body: CreateManagerDto
+  ) {
+    return this.managerService.create({
+      email: body.email,
+      name: body.name,
+      phoneNumber: body.phoneNumber,
+    }, file);
+  }
+
+
 }
