@@ -74,7 +74,7 @@ export class ProjectRepository extends BaseRepository<Project, ProjectProp>
       where: {
         id: entityId
       },
-      select: this.selectProps()
+      select: {...this.selectProps(), personnelId: true}
     });
 
     await this.close();
