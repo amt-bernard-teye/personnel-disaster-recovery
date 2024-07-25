@@ -117,6 +117,7 @@ model EducationalBackground {
 
 model Project {
   id Int @id @default(autoincrement())
+  created_at DateTime @default(now())
   title String
   description String
   personnelId Int
