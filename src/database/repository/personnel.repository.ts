@@ -112,6 +112,21 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
         return personnel;
     }
 
+    async findByUserId(userId: string): Promise<Personnel> {
+        const prisma = this.open();
+
+        const personnel = await prisma.personnel.findFirst({
+            where: {
+                userId: userId
+            },
+            select: this.selectProps()
+        });
+
+        await this.close();
+
+        return personnel;
+    }
+
     async findAll(page: number, wantAll: boolean = false): Promise<User[]> {
         const prisma = this.open();
 
