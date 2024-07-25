@@ -119,7 +119,7 @@ export default class ManagerRepository extends BaseRepository<Manager, ManagerPr
   async count(): Promise<number> {
     const prisma = this.open();
 
-    const rows = await prisma.user.count();
+    const rows = await prisma.manager.count();
 
     await this.close();
 
