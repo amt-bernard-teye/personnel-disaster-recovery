@@ -56,4 +56,41 @@ export class ManagerService {
       throwException(error);
     }
   }
+
+  async update(id: number, manager: CreateManager) {
+    try {
+      const existingManagerByEmail = await this.managerRepo.find(manager.email);
+      const existingManager = await this.managerRepo.find(id);
+
+      if (!existingManager || (existingManagerByEmail && existingManagerByEmail.id !== existingManager.id)) {
+        throw new BadRequestException("Email already in use by another manager");
+      }
+
+      existingManager.name = manager.name;
+      existingManager.phoneNumber = manager.phoneNumber;
+      existingManager.email = manager.email;
+
+      return await this.managerRepo.update(existingManager);
+    }
+    catch(error) {
+      throwException(error);
+    }
+  }
+
+  async delete(id: number) {
+    try {
+      const existingManager = await this.managerRepo.find(id);
+
+      if (!existingManager) {
+        throw new BadRequestException("Manager doesn't exist");
+      }
+
+      await this.managerRepo.delete(id);
+      
+      return "Manager deleted successfully";
+    }
+    catch(error) {
+      throwException(error);
+    }
+  }
 }

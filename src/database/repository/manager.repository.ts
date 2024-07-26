@@ -112,6 +112,9 @@ export default class ManagerRepository extends BaseRepository<Manager, ManagerPr
 
     if (wantAll) {
       managers = await prisma.manager.findMany({
+        where: {
+          status: AvailabilityStatus.AVAILABLE
+        },
         select: this.selectProps()
       });
     }
@@ -119,6 +122,9 @@ export default class ManagerRepository extends BaseRepository<Manager, ManagerPr
       managers = await prisma.manager.findMany({
         skip: page * rows,
         take: rows,
+        where: {
+          status: AvailabilityStatus.AVAILABLE
+        },
         select: this.selectProps()
       });
     }

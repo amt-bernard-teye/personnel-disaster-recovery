@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 
@@ -17,6 +17,9 @@ import { ResponseMessage } from 'src/shared/decorators/response-message.decorato
 import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger';
 import { swaggerCreateManagerSuccess, swaggerCreateManagerValidationError } from './swagger/create-manager.swagger';
 import { swaggerFetchManagerSuccess } from './swagger/fetch-manager.swagger';
+import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
+import { swaggerDeleteManagerSuccess, swaggerDeleteManagerValidationError } from './swagger/delete-manager.swagger';
+import { swaggerUpdateManagerSuccess, swaggerUpdateManagerValidationError } from './swagger/update-manager.swagger';
 
 @Controller('managers')
 @UseGuards(RolesGuard)
@@ -64,5 +67,26 @@ export class ManagerController {
     }, file);
   }
 
+  @Put(":id")
+  @UseInterceptors(DataMessageInterceptor)
+  @ResponseMessage("Manager updated successfully")
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerUpdateManagerSuccess)
+  @ApiResponse(swaggerUpdateManagerValidationError)
+  update(@Param("id", ValidationPipe) id: string, @Body(ValidationPipe) body: CreateManagerDto) {
+    return this.managerService.update(+id, {
+      email: body.email,
+      name: body.name,
+      phoneNumber: body.phoneNumber
+    });
+  }
 
+  @Delete(":id")
+  @UseInterceptors(MessageOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerDeleteManagerSuccess)
+  @ApiResponse(swaggerDeleteManagerValidationError)
+  delete(@Param("id", ValidationPipe) id: string) {
+    return this.managerService.delete(+id);
+  }
 }
