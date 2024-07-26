@@ -37,10 +37,10 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
                 },
                 personnelProfession: {
                     create: {
-                        currrentPosition: entity.personnelProfession.currentPosition,
-                        employee_id: entity.personnelProfession.employeeId,
-                        employer_email: entity.personnelProfession.employeeEmail,
-                        employer_name: entity.personnelProfession.employerName,
+                        currentPosition: entity.personnelProfession.currentPosition,
+                        employeeId: entity.personnelProfession.employeeId,
+                        employerEmail: entity.personnelProfession.employerEmail,
+                        employerName: entity.personnelProfession.employerName,
                         experienceYears: entity.personnelProfession.experienceYears
                     }
                 }
@@ -119,7 +119,13 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
             where: {
                 userId: userId
             },
-            select: this.selectProps()
+            select: {
+                ...this.selectProps(),
+                educationalBackground: true,
+                user: true,
+                profession: true,
+                personnelProfession: true
+            }
         });
 
         await this.close();
