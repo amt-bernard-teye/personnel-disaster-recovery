@@ -1,9 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentPosition, Gender, Role } from '@prisma/client';
+
 import { CreatePersonnel } from './dto/create-personnel.dto';
 import { PersonnelService } from './personnel.service';
 import { Personnel } from 'src/shared/interface/personnel.interface';
-import { CurrentPosition, Gender, Role } from '@prisma/client';
 import { EducationalBackground } from 'src/shared/interface/educational-background.interface';
 import { PersonnelProfession } from 'src/shared/interface/personnel-profession.interface';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
@@ -14,17 +15,21 @@ import { swaggerInternalError } from 'src/shared/swagger/internal-error.swagger'
 import { swaggerDeletePersonnelSuccess, swaggerDeletePersonnelValidationError } from './swagger/delete-personnel.swagger';
 import { swaggerFetchPersonnelnSuccess } from './swagger/fetch-personnel.swagger';
 import { swaggerCreatePersonnelSuccess, swaggerCreatePersonnelValidationError } from './swagger/create-personnel.swagger';
+import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.interceptor';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 
 @Controller('personnels')
 @ApiTags("Personnel")
-@ApiBearerAuth()
+@UseGuards(RolesGuard)
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class PersonnelController {
   constructor(
     private personnelService: PersonnelService
   ) { }
 
   @Get()
+  
   @Roles([Role.ADMIN])
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerFetchPersonnelnSuccess)
@@ -65,7 +70,7 @@ export class PersonnelController {
 
     const personnelProfession: PersonnelProfession = {
       currentPosition: <CurrentPosition>body.currentPosition,
-      employeeEmail: body.employerEmail,
+      employerEmail: body.employerEmail,
       employeeId: body.employeeId,
       employerName: body.employerName,
       experienceYears: body.experienceYears
@@ -82,5 +87,12 @@ export class PersonnelController {
   @ApiResponse(swaggerDeletePersonnelValidationError)
   delete(@Param("id") id: string) {
     return this.personnelService.delete(id);
+  }
+
+  @Get(":id")
+  @Roles([Role.ADMIN])
+  @UseInterceptors(DataOnlyInterceptor)
+  find(@Param("id") id: string) {
+    return this.personnelService.find(id);
   }
 }

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { PersonnelRepository } from 'src/database/repository/personnel.repository';
 import { ProfessionRespository } from 'src/database/repository/profession.repository';
+import { ProjectRepository } from 'src/database/repository/project.repository';
 import { UserRepository } from 'src/database/repository/user.repository';
 import { EducationalBackground } from 'src/shared/interface/educational-background.interface';
 import { PersonnelProfession } from 'src/shared/interface/personnel-profession.interface';
@@ -13,7 +14,8 @@ export class PersonnelService {
   constructor(
     private personnelRepo: PersonnelRepository,
     private professionRepo: ProfessionRespository,
-    private userRepo: UserRepository
+    private userRepo: UserRepository,
+    private projectRepo: ProjectRepository
   ) {}
 
   async findAll(page: number, wantAll: boolean) {
@@ -33,6 +35,23 @@ export class PersonnelService {
       const count = await this.personnelRepo.count();
 
       return {count, personnel: formattedPersonnels};
+    }
+    catch(error) {
+      throwException(error);
+    }
+  }
+
+  async find(id: string) {
+    try {
+      const personnel = await this.personnelRepo.findByUserId(id);
+      const totalProjects = await this.projectRepo.count(personnel.id);
+
+      const updatedPersonnel = {
+        ...personnel,
+        totalProjects
+      }
+
+      return updatedPersonnel;
     }
     catch(error) {
       throwException(error);
