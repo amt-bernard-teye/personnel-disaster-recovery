@@ -11,6 +11,7 @@ import { RegisterAccountService } from 'src/mailer/service/register-account.serv
 import { ForgotPasswordService } from 'src/mailer/service/forgot-password.service';
 import { AuthToken } from './enum/auth-token.enum';
 import { RefreshTokenPayload } from './types/refresh-token-payload.interface';
+import { PersonnelRepository } from 'src/database/repository/personnel.repository';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,8 @@ export class AuthService {
         private configService: ConfigService,
         private jwtService: JwtService,
         private accRegService: RegisterAccountService,
-        private forgotPasswordService: ForgotPasswordService
+        private forgotPasswordService: ForgotPasswordService,
+        private personnelRepo: PersonnelRepository
     ) { 
         this.secretKey = this.configService.get("SECRET_KEY");
     }
@@ -37,10 +39,23 @@ export class AuthService {
                 throw new BadRequestException("Invalid login credentials");
             }
 
+            const existingPersonnel = await this.personnelRepo.findByUserId(existingUser.id);
+
             const token = this.createLoginToken(existingUser);
             const {password, ...user} = existingUser;
 
-            return { token, user }; 
+            let formattedUser: any = {...user};
+
+            if (existingUser.role === Role.PERSONNEL && existingPersonnel) {
+                formattedUser = {...user, hasPersonnelData: true}
+            } else if (existingUser.role === Role.PERSONNEL) {
+                formattedUser = { ...user, hasPersonnelData: false};
+            }
+
+            return { 
+                token, 
+                user: formattedUser
+            }; 
         }
         catch(error) {
             if (error instanceof BadRequestException) {
