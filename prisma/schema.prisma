@@ -87,13 +87,13 @@ model Profession {
 }
 
 model PersonnelProfession {
-  employee_id String @id
+  employeeId String @id
   experienceYears Int
-  employer_name String
-  employer_email String
+  employerName String
+  employerEmail String
   personnelId Int @unique
   personnel Personnel @relation(fields: [personnelId], references: [id])
-  currrentPosition CurrentPosition
+  currentPosition CurrentPosition
 
   @@map("personnnel_profession")
 }
