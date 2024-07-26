@@ -4,11 +4,10 @@ import { IDeleteEntity } from "../interface/delete-entity.interface";
 import { ISingleFinder } from "../interface/single-finder.interface";
 import { BaseRepository } from "./base.repository";
 import { Project, ProjectProp } from "src/shared/interface/project.interface";
-import { IMultipleFinder } from "../interface/multiple-finder.interface";
 
 @Injectable()
 export class ProjectRepository extends BaseRepository<Project, ProjectProp>
-  implements IDeleteEntity, ISingleFinder<number, Project>, IMultipleFinder<Project>  {
+  implements IDeleteEntity, ISingleFinder<number, Project>  {
   selectProps(): ProjectProp {
     return {
       id: true,
@@ -82,34 +81,32 @@ export class ProjectRepository extends BaseRepository<Project, ProjectProp>
     return project;
   }
 
-  async findAll(page: number, wantAll: boolean): Promise<Project[]> {
+  async findAll(page: number, personnelId: number) {
     const prisma = this.open();
 
     const rows = 9;
-    let projects: Project[] = [];
-    
-    if (wantAll) {
-      projects = await prisma.project.findMany({
-        select: this.selectProps()
-      });
-    }
-    else {
-      projects = await prisma.project.findMany({
-        skip: page * rows,
-        take: rows,
-        select: this.selectProps()
-      });
-    }
+    const projects = await prisma.project.findMany({
+      skip: page * rows,
+      take: rows,
+      where: {
+        personnelId: personnelId
+      },
+      select: this.selectProps()
+    });
 
     await this.close();
 
     return projects;
   }
 
-  async count(): Promise<number> {
+  async count(personnel: number) {
     const prisma = this.open();
-    
-    const rows = await prisma.project.count();
+
+    const rows = await prisma.project.count({
+      where: {
+        personnelId: personnel
+      }
+    });
 
     await this.close();
 

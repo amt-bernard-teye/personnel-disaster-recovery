@@ -15,10 +15,11 @@ export class ProjectService {
     private personnelRepo: PersonnelRepository
   ) { }
 
-  async findAll(page: number, wantAll: boolean) {
+  async findAll(page: number, userId: string) {
     try {
-      const projects = await this.projectRepo.findAll(page, wantAll);
-      const count = await this.projectRepo.count();
+      const personnel = await this.personnelRepo.findByUserId(userId);
+      const projects = await this.projectRepo.findAll(page, personnel.id);
+      const count = await this.projectRepo.count(personnel.id);
 
       return {count, projects};
     }

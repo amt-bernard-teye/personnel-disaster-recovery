@@ -33,7 +33,7 @@ export class ProjectController {
   @UseInterceptors(DataOnlyInterceptor)
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerFetchProjectSuccess)
-  findAll(@Query("page") page: string, @Query("want") want: string) {
+  findAll(@Query("page") page: string, @Query("want") want: string, @Req() req: Request) {
     let parsedPage = pageParser(page);
     let wantAll = false;
 
@@ -41,7 +41,9 @@ export class ProjectController {
       wantAll = true;
     }
 
-    return this.projectService.findAll(parsedPage, wantAll);
+    const user = req['user'];
+
+    return this.projectService.findAll(parsedPage, user.id);
   }
 
   @Post()
