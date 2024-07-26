@@ -1,6 +1,8 @@
 import { AvailabilityStatus, Gender, PersonnelStatus } from "@prisma/client";
 import { EducationalBackground } from "./educational-background.interface";
 import { PersonnelProfession } from "./personnel-profession.interface";
+import { Profession } from "./profession.interface";
+import { User } from "./user.interface";
 
 export type Personnel = {
     id?: number;
@@ -15,7 +17,9 @@ export type Personnel = {
     availability?: AvailabilityStatus;
     professionId?: number;
     educationalBackground?: EducationalBackground,
-    personnelProfession?: PersonnelProfession
+    personnelProfession?: PersonnelProfession,
+    profession?: Profession,
+    user?: User
 }
 
 export type PersonnelProp = {
