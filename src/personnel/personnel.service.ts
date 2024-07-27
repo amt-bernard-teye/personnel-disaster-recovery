@@ -44,10 +44,17 @@ export class PersonnelService {
   async find(id: string) {
     try {
       const personnel = await this.personnelRepo.findByUserId(id);
+
+      if(!personnel) {
+        throw new BadRequestException("Personnel doesn't exist");
+      }
+
       const totalProjects = await this.projectRepo.count(personnel.id);
+      const {password, ...result} = personnel.user;
 
       const updatedPersonnel = {
         ...personnel,
+        user: result,
         totalProjects
       }
 

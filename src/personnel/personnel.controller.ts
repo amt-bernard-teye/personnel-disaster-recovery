@@ -17,6 +17,7 @@ import { swaggerFetchPersonnelnSuccess } from './swagger/fetch-personnel.swagger
 import { swaggerCreatePersonnelSuccess, swaggerCreatePersonnelValidationError } from './swagger/create-personnel.swagger';
 import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.interceptor';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
+import { swaggerFindPersonnelSuccess, swaggerFindPersonnelValidationError } from './swagger/find-personnel.swagger';
 
 @Controller('personnels')
 @ApiTags("Personnel")
@@ -92,6 +93,9 @@ export class PersonnelController {
   @Get(":id")
   @Roles([Role.ADMIN])
   @UseInterceptors(DataOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerFindPersonnelSuccess)
+  @ApiResponse(swaggerFindPersonnelValidationError)
   find(@Param("id") id: string) {
     return this.personnelService.find(id);
   }
