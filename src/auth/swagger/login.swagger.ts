@@ -9,8 +9,8 @@ export const swaggerLoginSuccess = {
                     message: "Access granted",
                     data: {
                         token: {
-                            accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBRE0xIiwiaWF0IjoxNzE5ODQxNDUxLCJleHAiOjE3MTk4NDIzNTF9.kr3pjbteowEv4N_v55d7R_ayXovKJMvEAqMyMSz7Fkc",
-                            refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJBRE0xIiwiZW1haWwiOiJhZG1pbjEyM0BtYWlsLmNvbSIsImlhdCI6MTcxOTg0MTQ1MSwiZXhwIjoxNzIyNDMzNDUxfQ.vG53CQkp3PktzStyqWisuvZmqvE97I6adHQSmU2_IxY"
+                            accessToken: "XXXXXXXX......",
+                            refreshToken: "XXXXXXXX......"
                         },
                         user: {
                             name: "Admin",

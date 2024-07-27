@@ -6,7 +6,7 @@ export const swaggerRefreshTokenSuccess = {
             schema: {
                 type: "object",
                 example: {
-                    data: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJQU0wxMDAwIiwidG9rZW4iOiJhY2Nlc3MtdGsiLCJpYXQiOjE3MjAxNzgxMDYsImV4cCI6MTcyMDE3OTAwNn0.M97ZQ5NrYF7mc1oi_vv9bpqS-l0mbUGjvEat-pDdD_Q"
+                    data: "XXXXXXXX......"
                 }
             }
         }
