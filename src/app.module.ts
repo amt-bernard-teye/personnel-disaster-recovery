@@ -13,6 +13,7 @@ import { EmergencyTypeModule } from './emergency-type/emergency-type.module';
 import { ProfessionsModule } from './professions/professions.module';
 import { ProjectModule } from './project/project.module';
 import { ManagerModule } from './manager/manager.module';
+import { EmergencyInitiativeModule } from './emergency-initiative/emergency-initiative.module';
 
 @Module({ 
   imports: [
@@ -29,6 +30,7 @@ import { ManagerModule } from './manager/manager.module';
     ProfessionsModule,
     ProjectModule,
     ManagerModule,
+    EmergencyInitiativeModule,
   ]
 })
 export class AppModule {}
