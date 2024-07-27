@@ -23,7 +23,14 @@ export class EmergencyInitiativeRepository extends BaseRepository<EmergencyIniti
     const prisma = this.open();
 
     const addedEmergencyInitiative = await prisma.emergencyInitiative.create({
-      data: this.getData(entity),
+      data: {
+        ...this.getData(entity),
+        emergencyInitiativeProfession: {
+          createMany: {
+            data: entity.emergencyInitiativeProfession
+          }
+        }
+      },
       select: this.selectProps()
     });
 
