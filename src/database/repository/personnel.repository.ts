@@ -73,7 +73,10 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
             where: {
                 id: entity.id,
             },
-            data: this.getData(entity),
+            data: {
+                ...this.getData(entity),
+                status: entity.status
+            },
             select: this.selectProps()
         });
 

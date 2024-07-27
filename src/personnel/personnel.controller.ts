@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentPosition, Gender, Role } from '@prisma/client';
 
@@ -18,6 +18,7 @@ import { swaggerCreatePersonnelSuccess, swaggerCreatePersonnelValidationError } 
 import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.interceptor';
 import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { swaggerFindPersonnelSuccess, swaggerFindPersonnelValidationError } from './swagger/find-personnel.swagger';
+import { swaggerVerifyPersonnelSuccess, swaggerVerifyPersonnelValidationError } from './swagger/verify-personnel.swagger';
 
 @Controller('personnels')
 @ApiTags("Personnel")
@@ -86,7 +87,7 @@ export class PersonnelController {
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerDeletePersonnelSuccess)
   @ApiResponse(swaggerDeletePersonnelValidationError)
-  delete(@Param("id") id: string) {
+  delete(@Param("id", ValidationPipe) id: string) {
     return this.personnelService.delete(id);
   }
 
@@ -96,7 +97,17 @@ export class PersonnelController {
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerFindPersonnelSuccess)
   @ApiResponse(swaggerFindPersonnelValidationError)
-  find(@Param("id") id: string) {
+  find(@Param("id", ValidationPipe) id: string) {
     return this.personnelService.find(id);
+  }
+
+  @Put(":id/verify")
+  @Roles([Role.ADMIN])
+  @UseInterceptors(MessageOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerVerifyPersonnelSuccess)
+  @ApiResponse(swaggerVerifyPersonnelValidationError)
+  verify(@Param("id", ValidationPipe) id: string) {
+    return this.personnelService.verify(id);
   }
 }

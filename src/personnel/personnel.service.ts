@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { PersonnelStatus } from '@prisma/client';
 
 import { PersonnelRepository } from 'src/database/repository/personnel.repository';
 import { ProfessionRespository } from 'src/database/repository/profession.repository';
@@ -98,6 +99,24 @@ export class PersonnelService {
       await this.userRepo.delete(id);
 
       return "Personnel deleted successfully";
+    }
+    catch(error) {
+      throwException(error);
+    }
+  }
+
+  async verify(id: string) {
+    try {
+      const existingPersonnel = await this.personnelRepo.findByUserId(id);
+
+      if (!existingPersonnel) {
+        throw new BadRequestException("Personnel doesn't exist");
+      }
+
+      existingPersonnel.status = PersonnelStatus.APPROVE;
+      await this.personnelRepo.update(existingPersonnel);
+
+      return "Personnel approved successfully";
     }
     catch(error) {
       throwException(error);
