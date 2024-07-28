@@ -1,4 +1,4 @@
-import { AvailabilityStatus, Gender, PersonnelStatus } from "@prisma/client";
+import { AvailabilityStatus, Gender, PersonnelStatus, State } from "@prisma/client";
 import { EducationalBackground } from "./educational-background.interface";
 import { PersonnelProfession } from "./personnel-profession.interface";
 import { Profession } from "./profession.interface";
@@ -12,6 +12,7 @@ export type Personnel = {
     dob: Date;
     town: string;
     digitalAddress: string;
+    currentState: State
     userId: string;
     status?: PersonnelStatus;
     availability?: AvailabilityStatus;
@@ -29,6 +30,7 @@ export type PersonnelProp = {
     gender: boolean;
     dob: boolean;
     town: boolean;
+    currentState: boolean;
     digitalAddress: boolean;
     userId: boolean;
     status: boolean;

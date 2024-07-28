@@ -19,6 +19,7 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
             status: true,
             town: true,
             userId: true,
+            currentState: true
         };
     }
 
@@ -62,7 +63,8 @@ export class PersonnelRepository extends BaseRepository<Personnel, PersonnelProp
             phoneNumber: entity.phoneNumber,
             town: entity.town,
             userId: entity.userId,
-            professionId: entity.professionId
+            professionId: entity.professionId,
+            currentState: entity.currentState,
         };
     }
 
