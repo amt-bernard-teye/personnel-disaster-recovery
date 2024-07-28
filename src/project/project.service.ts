@@ -7,6 +7,7 @@ import { throwException } from 'src/shared/util/handle-bad-request.util';
 import { ProjectUpdateDetails } from './project-update-details.interface';
 import { Personnel } from 'src/shared/interface/personnel.interface';
 import { Project } from 'src/shared/interface/project.interface';
+import { RankPersonnel } from 'src/shared/rank-personnel.service';
 
 @Injectable()
 export class ProjectService {
@@ -36,6 +37,13 @@ export class ProjectService {
         description,
         personnelId: existingPersonnel.id
       });
+
+      const totalProjects = await this.projectRepo.count(existingPersonnel.id);
+      existingPersonnel.currentState = RankPersonnel.rank(
+        existingPersonnel.personnelProfession.experienceYears, 
+        totalProjects
+      );
+      await this.personnelRepo.update(existingPersonnel);
 
       return project;
     }
