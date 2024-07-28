@@ -3,10 +3,11 @@ import { Injectable } from "@nestjs/common";
 import { EmergencyInitiative, EmergencyInitiativeProp } from "src/shared/interface/emergency-initiative.interface";
 import { BaseRepository } from "./base.repository";
 import { IMultipleFinder } from "../interface/multiple-finder.interface";
+import { ISingleFinder } from "../interface/single-finder.interface";
 
 @Injectable()
 export class EmergencyInitiativeRepository extends BaseRepository<EmergencyInitiative, EmergencyInitiativeProp>
-  implements IMultipleFinder<EmergencyInitiative> {
+  implements IMultipleFinder<EmergencyInitiative>, ISingleFinder<number, EmergencyInitiative> {
   selectProps(): EmergencyInitiativeProp {
     return {
       id: true,
@@ -67,6 +68,21 @@ export class EmergencyInitiativeRepository extends BaseRepository<EmergencyIniti
     await this.close();
 
     return updatedEmergencyInitiative;
+  }
+
+  async find(entityId: number): Promise<EmergencyInitiative> {
+    const prisma = this.open();
+
+    const initiative = await prisma.emergencyInitiative.findFirst({
+      where: {
+        id: entityId
+      },
+      select: this.selectProps()
+    });
+
+    await this.close();
+
+    return initiative;
   }
 
   async findAll(page: number, wantAll: boolean = false): Promise<EmergencyInitiative[]> {
