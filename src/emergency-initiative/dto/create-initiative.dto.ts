@@ -34,11 +34,8 @@ export class CreateInitiativeDto {
   state: string;
 
   @ApiProperty({
-    example: [
-      { professionId: 1, number: 1 },
-      { professionId: 12, number: 10 },
-    ]
+    example: [1, 2, 3, 4]
   })
   @IsArray()
-  professions: EmergencyInitiativeProfession[];
+  professions: number[];
 }

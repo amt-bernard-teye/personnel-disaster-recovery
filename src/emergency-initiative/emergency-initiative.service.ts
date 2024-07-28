@@ -33,14 +33,14 @@ export class EmergencyInitiativeService {
       for (let value of initiative.emergencyInitiativeProfession) {
         let existingProfession = await this.professionRepo.find(value.professionId);
 
-        if (!existingProfession) {
+        if (!existingProfession || existingProfession.status === "UNAVAILABLE") {
           throw new BadRequestException("Profession doesn't exist");
         }
       }
 
       const existingManager = await this.managerRepo.find(initiative.managerId);
 
-      if (!existingManager) {
+      if (!existingManager || existingManager.status === "UNAVAILABLE") {
         throw new BadRequestException("Manager doesn't exist");
       }
 

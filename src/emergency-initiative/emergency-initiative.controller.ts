@@ -15,6 +15,7 @@ import { DataMessageInterceptor } from 'src/shared/interceptors/data-message.int
 import { ResponseMessage } from 'src/shared/decorators/response-message.decorator';
 import { EmergencyInitiative } from 'src/shared/interface/emergency-initiative.interface';
 import { swaggerCreateInitiativeSuccess, swaggerCreateInitiativeValidationError } from './swagger/create-initiative.swagger';
+import { EmergencyInitiativeProfession } from 'src/shared/interface/emergency-initiative-profession.interface';
 
 @Controller('emergency-initiatives')
 @UseGuards(RolesGuard)
@@ -49,6 +50,7 @@ export class EmergencyInitiativeController {
   @ApiResponse(swaggerCreateInitiativeSuccess)
   @ApiResponse(swaggerCreateInitiativeValidationError)
   create(@Body(ValidationPipe) body: CreateInitiativeDto) {
+    let profession: EmergencyInitiativeProfession[] = body.professions.map(value => ({professionId: value, number: 1}))
     let initiative: EmergencyInitiative = {
       description: body.description,
       dispatched_date: new Date(body.dispatched_date),
@@ -57,9 +59,10 @@ export class EmergencyInitiativeController {
       state: <State>body.state,
       managerId: body.managerId,
       emergencyTypeId: body.emergencyTypeId,
-      emergencyInitiativeProfession: body.professions
+      emergencyInitiativeProfession: profession
     };
 
     return this.emergencyInitiativeService.create(initiative);
   }
+
 }
