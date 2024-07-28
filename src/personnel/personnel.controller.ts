@@ -19,6 +19,7 @@ import { DataOnlyInterceptor } from 'src/shared/interceptors/data-only.intercept
 import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { swaggerFindPersonnelSuccess, swaggerFindPersonnelValidationError } from './swagger/find-personnel.swagger';
 import { swaggerVerifyPersonnelSuccess, swaggerVerifyPersonnelValidationError } from './swagger/verify-personnel.swagger';
+import { RankPersonnel } from 'src/shared/rank-personnel.service';
 
 @Controller('personnels')
 @ApiTags("Personnel")
@@ -61,7 +62,8 @@ export class PersonnelController {
       phoneNumber: body.phoneNumber,
       professionId: body.professionId,
       town: body.town,
-      userId: request['user']['id']
+      userId: request['user']['id'],
+      currentState: RankPersonnel.rank(body.experienceYears, 0)
     };
 
     const educational: EducationalBackground = {
