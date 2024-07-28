@@ -45,7 +45,7 @@ model Personnel {
   dob DateTime
   town String
   digitalAddress String
-  currentState State
+  currentState State @default(LOW)
   userId String @unique
   user User @relation(fields: [userId], references: [id])
   professionId Int @map("profession_id")
