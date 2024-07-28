@@ -95,4 +95,19 @@ export class EmergencyInitiativeService {
       throwException(error);
     }
   }
+
+  async find(initiativeId: number) {
+    try {
+      const existingInitiative = await this.emergencyInitiativeRepo.find(initiativeId);
+
+      if (!existingInitiative) {
+        throw new BadRequestException("Initiative doesn't exist");
+      }
+
+      return existingInitiative;
+    }
+    catch(error) {
+      throwException(error);
+    }
+  }
 }

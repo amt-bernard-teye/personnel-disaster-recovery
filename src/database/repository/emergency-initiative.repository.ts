@@ -78,7 +78,31 @@ export class EmergencyInitiativeRepository extends BaseRepository<EmergencyIniti
       where: {
         id: entityId
       },
-      select: this.selectProps()
+      select: {
+        ...this.selectProps(),
+        emergencyInitiativePersonnel: {
+          select: {
+            personnel: {
+              select: {
+                gender: true,
+                phoneNumber: true,
+                digitalAddress: true,
+                dob: true,
+                town: true,
+                educationalBackground: true,
+                user: {
+                  select: {
+                    name: true,
+                    email: true,
+                    image: true,
+                  }
+                }
+              },
+              
+            }
+          }
+        }
+      }
     });
 
     await this.close();

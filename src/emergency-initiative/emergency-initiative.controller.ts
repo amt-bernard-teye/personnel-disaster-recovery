@@ -20,6 +20,7 @@ import { Request } from 'express';
 import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
 import { swaggerApproveInitiativeSuccess, swaggerApproveInitiativeValidationError } from './swagger/approve-initiatve.swagger';
 import { User } from 'src/shared/interface/user.interface';
+import { swaggerFindInitiativeSuccess, swaggerFindInitiativeValidationError } from './swagger/find-initiative.swagger';
 
 @Controller('emergency-initiatives')
 @UseGuards(RolesGuard)
@@ -86,5 +87,15 @@ export class EmergencyInitiativeController {
     const user = req['user'];
 
     return this.emergencyInitiativeService.approve(+id, user.id);
+  }
+
+  @Get(":id")
+  @Roles([Role.ADMIN])
+  @UseInterceptors(DataOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerFindInitiativeSuccess)
+  @ApiResponse(swaggerFindInitiativeValidationError)
+  find(@Param("id", ValidationPipe) id: string) {
+    return this.emergencyInitiativeService.find(+id);
   }
 }

@@ -2,6 +2,7 @@ import { State } from "@prisma/client";
 import { Manager } from "./manager.interface";
 import { EmergencyType } from "./emergency-type.interface";
 import { EmergencyInitiativeProfession } from "./emergency-initiative-profession.interface";
+import { EmergencyInitiativePersonnel } from "./emergency-initiative-personnel.interface";
 
 export interface EmergencyInitiative {
   id?: number;
