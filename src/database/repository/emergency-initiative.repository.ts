@@ -4,6 +4,7 @@ import { EmergencyInitiative, EmergencyInitiativeProp } from "src/shared/interfa
 import { BaseRepository } from "./base.repository";
 import { IMultipleFinder } from "../interface/multiple-finder.interface";
 import { ISingleFinder } from "../interface/single-finder.interface";
+import { State } from "@prisma/client";
 
 @Injectable()
 export class EmergencyInitiativeRepository extends BaseRepository<EmergencyInitiative, EmergencyInitiativeProp>
@@ -108,5 +109,47 @@ export class EmergencyInitiativeRepository extends BaseRepository<EmergencyIniti
     await this.close();
 
     return rows;
+  }
+
+  async findAllByProfessionAndState(page: number, professionId: number, state: State): Promise<EmergencyInitiative[]> {
+    const prisma = this.open();
+
+    const row = 9;
+    const initiatives = await prisma.emergencyInitiative.findMany({
+      skip: row * page,
+      take: row,
+      where: {
+        state: state,
+        emergencyInitiativeProfession: {
+          every: {
+            professionId: professionId
+          }
+        }
+      },
+      select: this.selectProps()
+    });
+
+    await this.close();
+
+    return initiatives;
+  }
+
+  async countByProfessionAndState(professionId: number, state: State): Promise<number> {
+    const prisma = this.open();
+
+    const count = await prisma.emergencyInitiative.count({
+      where: {
+        state: state,
+        emergencyInitiativeProfession: {
+          every: {
+            professionId: professionId
+          }
+        }
+      }
+    });
+
+    await this.close();
+
+    return count;
   }
 }

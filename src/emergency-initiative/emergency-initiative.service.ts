@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { State } from '@prisma/client';
+import { Role } from '@prisma/client';
 
 import { EmergencyInitiativeRepository } from 'src/database/repository/emergency-initiative.repository';
 import { EmergencyTypeRepository } from 'src/database/repository/emergency-type.repository';
@@ -7,8 +7,8 @@ import { InitiativePersonnelRepository } from 'src/database/repository/initiativ
 import ManagerRepository from 'src/database/repository/manager.repository';
 import { PersonnelRepository } from 'src/database/repository/personnel.repository';
 import { ProfessionRespository } from 'src/database/repository/profession.repository';
-import { UserRepository } from 'src/database/repository/user.repository';
 import { EmergencyInitiative } from 'src/shared/interface/emergency-initiative.interface';
+import { User } from 'src/shared/interface/user.interface';
 import { throwException } from 'src/shared/util/handle-bad-request.util';
 
 @Injectable()
@@ -19,14 +19,24 @@ export class EmergencyInitiativeService {
     private emergencyTypeRepo: EmergencyTypeRepository,
     private professionRepo: ProfessionRespository,
     private initiativePersonnelRepo: InitiativePersonnelRepository,
-    private userRepo: UserRepository,
     private personnelRepo: PersonnelRepository
   ) {}
 
-  async findAll(page: number) {
+  async findAll(page: number, user: User) {
     try {
-      const initiatives = await this.emergencyInitiativeRepo.findAll(page);
-      const count = await this.emergencyInitiativeRepo.count();
+      let initiatives: EmergencyInitiative[] = [];
+      let count = 0;
+
+      if (user.role === Role.ADMIN) {
+        initiatives = await this.emergencyInitiativeRepo.findAll(page);
+        count = await this.emergencyInitiativeRepo.count();
+      }
+      else {
+        const existingPersonnel = await this.personnelRepo.findByUserId(user.id);
+
+        initiatives = await this.emergencyInitiativeRepo.findAllByProfessionAndState(page, existingPersonnel.professionId, existingPersonnel.currentState);
+        count = await this.emergencyInitiativeRepo.countByProfessionAndState(existingPersonnel.professionId, existingPersonnel.currentState);
+      }
 
       return {count, initiatives};
     }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role, State } from '@prisma/client';
 
@@ -19,6 +19,7 @@ import { EmergencyInitiativeProfession } from 'src/shared/interface/emergency-in
 import { Request } from 'express';
 import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
 import { swaggerApproveInitiativeSuccess, swaggerApproveInitiativeValidationError } from './swagger/approve-initiatve.swagger';
+import { User } from 'src/shared/interface/user.interface';
 
 @Controller('emergency-initiatives')
 @UseGuards(RolesGuard)
@@ -31,11 +32,15 @@ export class EmergencyInitiativeController {
   ) {}
 
   @Get()
-  @Roles([Role.ADMIN])
+  @Roles([Role.ADMIN, Role.PERSONNEL])
   @UseInterceptors(DataOnlyInterceptor)
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerFetchInitiativeSuccess)
-  findAll(@Query("page") page: string, @Query("want") want: string) {
+  findAll(
+    @Query("page") page: string, 
+    @Query("want") want: string,
+    @Req() req: Request
+  ) {
     let parsedPage = pageParser(page);
     let wantAll = false;
 
@@ -43,7 +48,9 @@ export class EmergencyInitiativeController {
       wantAll = true;
     }
 
-    return this.emergencyInitiativeService.findAll(parsedPage);
+    const user = <User>req['user'];
+
+    return this.emergencyInitiativeService.findAll(parsedPage, user);
   }
 
   @Post()
