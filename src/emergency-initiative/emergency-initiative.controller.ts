@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Query, Req, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role, State } from '@prisma/client';
 
@@ -16,10 +16,12 @@ import { ResponseMessage } from 'src/shared/decorators/response-message.decorato
 import { EmergencyInitiative } from 'src/shared/interface/emergency-initiative.interface';
 import { swaggerCreateInitiativeSuccess, swaggerCreateInitiativeValidationError } from './swagger/create-initiative.swagger';
 import { EmergencyInitiativeProfession } from 'src/shared/interface/emergency-initiative-profession.interface';
+import { Request } from 'express';
+import { MessageOnlyInterceptor } from 'src/shared/interceptors/message-only.interceptor';
+import { swaggerApproveInitiativeSuccess, swaggerApproveInitiativeValidationError } from './swagger/approve-initiatve.swagger';
 
 @Controller('emergency-initiatives')
 @UseGuards(RolesGuard)
-@Roles([Role.ADMIN])
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 @ApiTags("Emergency Initiative")
@@ -29,6 +31,7 @@ export class EmergencyInitiativeController {
   ) {}
 
   @Get()
+  @Roles([Role.ADMIN])
   @UseInterceptors(DataOnlyInterceptor)
   @ApiResponse(swaggerInternalError)
   @ApiResponse(swaggerFetchInitiativeSuccess)
@@ -44,6 +47,7 @@ export class EmergencyInitiativeController {
   }
 
   @Post()
+  @Roles([Role.ADMIN])
   @UseInterceptors(DataMessageInterceptor)
   @ResponseMessage("Initiative added successfully")
   @ApiResponse(swaggerInternalError)
@@ -65,4 +69,15 @@ export class EmergencyInitiativeController {
     return this.emergencyInitiativeService.create(initiative);
   }
 
+  @Post(":id/approve")
+  @Roles([Role.PERSONNEL])
+  @UseInterceptors(MessageOnlyInterceptor)
+  @ApiResponse(swaggerInternalError)
+  @ApiResponse(swaggerApproveInitiativeSuccess)
+  @ApiResponse(swaggerApproveInitiativeValidationError)
+  approve(@Param("id", ValidationPipe) id: string, @Req() req: Request) {
+    const user = req['user'];
+
+    return this.emergencyInitiativeService.approve(+id, user.id);
+  }
 }
