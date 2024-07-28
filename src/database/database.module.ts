@@ -7,6 +7,7 @@ import { ProfessionRespository } from './repository/profession.repository';
 import { ProjectRepository } from './repository/project.repository';
 import ManagerRepository from './repository/manager.repository';
 import { EmergencyInitiativeRepository } from './repository/emergency-initiative.repository';
+import { InitiativePersonnelRepository } from './repository/initiative-personnel.repository';
 
 @Global()
 @Module({
@@ -17,7 +18,8 @@ import { EmergencyInitiativeRepository } from './repository/emergency-initiative
         ProfessionRespository,
         ProjectRepository,
         ManagerRepository,
-        EmergencyInitiativeRepository
+        EmergencyInitiativeRepository,
+        InitiativePersonnelRepository
     ],
     exports: [
         UserRepository,
@@ -26,7 +28,8 @@ import { EmergencyInitiativeRepository } from './repository/emergency-initiative
         ProfessionRespository,
         ProjectRepository,
         ManagerRepository,
-        EmergencyInitiativeRepository
+        EmergencyInitiativeRepository,
+        InitiativePersonnelRepository
     ]
 })
 export class DatabaseModule {}
